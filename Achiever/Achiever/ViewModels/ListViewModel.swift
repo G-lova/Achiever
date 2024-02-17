@@ -12,11 +12,11 @@ class ListViewModel: ListViewModelDelegate {
     static let shared = ListViewModel()
     
     func fetchLists() {
-        <#code#>
+        
     }
     
     func createList(listName: String) {
-        <#code#>
+        
     }
     
 

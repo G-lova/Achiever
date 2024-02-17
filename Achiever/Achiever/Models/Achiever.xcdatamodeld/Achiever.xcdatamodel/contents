@@ -4,24 +4,27 @@
         <attribute name="boardCreationDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="boardID" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="boardName" attributeType="String"/>
-        <attribute name="boardTheme" attributeType="String" defaultValueString="normal"/>
+        <attribute name="boardTheme" attributeType="String" defaultValueString="light"/>
         <attribute name="isArchive" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isPrivate" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="boardCreator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+        <relationship name="boardLists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="List" inverseName="listParentBoard" inverseEntity="List"/>
+        <relationship name="boardManagers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="userBoardsToManage" inverseEntity="User"/>
+        <relationship name="boardOwner" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="userBoardsToOwn" inverseEntity="User"/>
+        <relationship name="boardReaders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="userBoardsToRead" inverseEntity="User"/>
+        <relationship name="boardWorkspace" maxCount="1" deletionRule="Nullify" destinationEntity="Workspace" inverseName="workspaceBoards" inverseEntity="Workspace"/>
     </entity>
     <entity name="Files" representedClassName="Files" syncable="YES">
         <attribute name="fileData" attributeType="Binary"/>
         <attribute name="fileID" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="fileName" attributeType="String"/>
-        <relationship name="fileTask" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task"/>
-        <relationship name="fileUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+        <relationship name="fileTask" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="taskFiles" inverseEntity="Task"/>
     </entity>
     <entity name="List" representedClassName="List" syncable="YES">
         <attribute name="listCreationDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="listID" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="listName" attributeType="String"/>
-        <relationship name="listCreator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
-        <relationship name="listParentBoard" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Board"/>
+        <relationship name="listParentBoard" maxCount="1" deletionRule="Nullify" destinationEntity="Board" inverseName="boardLists" inverseEntity="Board"/>
+        <relationship name="listTasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="taskParentList" inverseEntity="Task"/>
     </entity>
     <entity name="Task" representedClassName="Task" syncable="YES">
         <attribute name="isFinished" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -32,21 +35,34 @@
         <attribute name="taskDescription" optional="YES" attributeType="String"/>
         <attribute name="taskID" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="taskName" attributeType="String"/>
-        <relationship name="taskCreator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
-        <relationship name="taskParentList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="List"/>
-        <relationship name="taskResponsibleUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+        <relationship name="taskExecutor" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="userTasksToExecute" inverseEntity="User"/>
+        <relationship name="taskFiles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Files" inverseName="fileTask" inverseEntity="Files"/>
+        <relationship name="taskParentList" maxCount="1" deletionRule="Nullify" destinationEntity="List" inverseName="listTasks" inverseEntity="List"/>
     </entity>
     <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="uesrPassword" attributeType="String"/>
         <attribute name="userEmail" attributeType="String"/>
         <attribute name="userID" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="userName" attributeType="String"/>
         <attribute name="userPlan" attributeType="String" defaultValueString="basic"/>
+        <relationship name="userBoardsToManage" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardManagers" inverseEntity="Board"/>
+        <relationship name="userBoardsToOwn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardOwner" inverseEntity="Board"/>
+        <relationship name="userBoardsToRead" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardReaders" inverseEntity="Board"/>
+        <relationship name="userTasksToExecute" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="taskExecutor" inverseEntity="Task"/>
+        <relationship name="userWorkspaces" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Workspace" inverseName="workspaceOwner" inverseEntity="Workspace"/>
+    </entity>
+    <entity name="Workspace" representedClassName="Workspace" syncable="YES">
+        <attribute name="workspaceID" attributeType="Integer 64" usesScalarValueType="YES"/>
+        <attribute name="workspaceName" attributeType="String"/>
+        <relationship name="workspaceBoards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardWorkspace" inverseEntity="Board"/>
+        <relationship name="workspaceOwner" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="userWorkspaces" inverseEntity="User"/>
     </entity>
     <elements>
-        <element name="User" positionX="-233.04296875" positionY="11.980712890625" width="128" height="103"/>
-        <element name="Board" positionX="-18" positionY="-18" width="128" height="148"/>
-        <element name="List" positionX="-90" positionY="90" width="128" height="104"/>
-        <element name="Task" positionX="-81" positionY="126" width="128" height="194"/>
-        <element name="Files" positionX="-72" positionY="198" width="128" height="104"/>
+        <element name="Board" positionX="-184.98046875" positionY="-189.98876953125" width="128" height="208"/>
+        <element name="Files" positionX="-72" positionY="198" width="128" height="103"/>
+        <element name="List" positionX="-273.984375" positionY="1.99951171875" width="128" height="118"/>
+        <element name="Task" positionX="0.0078125" positionY="-98.0057373046875" width="128" height="208"/>
+        <element name="User" positionX="-396.103515625" positionY="-149.02294921875" width="128" height="193"/>
+        <element name="Workspace" positionX="-126" positionY="144" width="128" height="103"/>
     </elements>
 </model>

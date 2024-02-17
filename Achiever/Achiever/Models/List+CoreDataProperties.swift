@@ -2,7 +2,7 @@
 //  List+CoreDataProperties.swift
 //  Achiever
 //
-//  Created by User on 15.02.2024.
+//  Created by User on 16.02.2024.
 //
 //
 
@@ -16,11 +16,28 @@ extension List {
         return NSFetchRequest<List>(entityName: "List")
     }
 
+    @NSManaged public var listCreationDate: Date?
     @NSManaged public var listID: Int64
     @NSManaged public var listName: String?
-    @NSManaged public var listCreationDate: Date?
     @NSManaged public var listParentBoard: Board?
-    @NSManaged public var listCreator: User?
+    @NSManaged public var listTasks: NSSet?
+
+}
+
+// MARK: Generated accessors for listTasks
+extension List {
+
+    @objc(addListTasksObject:)
+    @NSManaged public func addToListTasks(_ value: Task)
+
+    @objc(removeListTasksObject:)
+    @NSManaged public func removeFromListTasks(_ value: Task)
+
+    @objc(addListTasks:)
+    @NSManaged public func addToListTasks(_ values: NSSet)
+
+    @objc(removeListTasks:)
+    @NSManaged public func removeFromListTasks(_ values: NSSet)
 
 }
 

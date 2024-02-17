@@ -2,7 +2,7 @@
 //  Task+CoreDataProperties.swift
 //  Achiever
 //
-//  Created by User on 15.02.2024.
+//  Created by User on 16.02.2024.
 //
 //
 
@@ -16,17 +16,51 @@ extension Task {
         return NSFetchRequest<Task>(entityName: "Task")
     }
 
-    @NSManaged public var taskID: Int64
-    @NSManaged public var taskName: String?
+    @NSManaged public var isFinished: Bool
+    @NSManaged public var isRepeat: Bool
+    @NSManaged public var needToRemind: Bool
     @NSManaged public var taskCreationDate: Date?
     @NSManaged public var taskDeadline: Date?
-    @NSManaged public var isRepeat: Bool
-    @NSManaged public var isFinished: Bool
     @NSManaged public var taskDescription: String?
-    @NSManaged public var needToRemind: Bool
+    @NSManaged public var taskID: Int64
+    @NSManaged public var taskName: String?
     @NSManaged public var taskParentList: List?
-    @NSManaged public var taskCreator: User?
-    @NSManaged public var taskResponsibleUser: User?
+    @NSManaged public var taskExecutor: NSSet?
+    @NSManaged public var taskFiles: NSSet?
+
+}
+
+// MARK: Generated accessors for taskExecutor
+extension Task {
+
+    @objc(addTaskExecutorObject:)
+    @NSManaged public func addToTaskExecutor(_ value: User)
+
+    @objc(removeTaskExecutorObject:)
+    @NSManaged public func removeFromTaskExecutor(_ value: User)
+
+    @objc(addTaskExecutor:)
+    @NSManaged public func addToTaskExecutor(_ values: NSSet)
+
+    @objc(removeTaskExecutor:)
+    @NSManaged public func removeFromTaskExecutor(_ values: NSSet)
+
+}
+
+// MARK: Generated accessors for taskFiles
+extension Task {
+
+    @objc(addTaskFilesObject:)
+    @NSManaged public func addToTaskFiles(_ value: Files)
+
+    @objc(removeTaskFilesObject:)
+    @NSManaged public func removeFromTaskFiles(_ value: Files)
+
+    @objc(addTaskFiles:)
+    @NSManaged public func addToTaskFiles(_ values: NSSet)
+
+    @objc(removeTaskFiles:)
+    @NSManaged public func removeFromTaskFiles(_ values: NSSet)
 
 }
 
