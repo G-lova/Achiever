@@ -38,6 +38,13 @@
 		CE6E29A62B7F990F00AE0101 /* Workspace+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E299A2B7F990F00AE0101 /* Workspace+CoreDataProperties.swift */; };
 		CE6E29A72B7F990F00AE0101 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E299B2B7F990F00AE0101 /* Task+CoreDataClass.swift */; };
 		CE6E29A82B7F990F00AE0101 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E299C2B7F990F00AE0101 /* Task+CoreDataProperties.swift */; };
+		CE914AF02B82193C003FCEC5 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914AEF2B82193C003FCEC5 /* CoreDataStack.swift */; };
+		CE914AF52B821B99003FCEC5 /* Plan.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914AF42B821B99003FCEC5 /* Plan.swift */; };
+		CE914AFD2B8227DD003FCEC5 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914AFC2B8227DD003FCEC5 /* AuthService.swift */; };
+		CE914B0B2B823ED7003FCEC5 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */; };
+		CE914B132B825891003FCEC5 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */; };
+		CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */; };
+		CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +102,13 @@
 		CE6E299A2B7F990F00AE0101 /* Workspace+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Workspace+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CE6E299B2B7F990F00AE0101 /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CE6E299C2B7F990F00AE0101 /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		CE914AEF2B82193C003FCEC5 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Achiever/ViewModels/CoreDataStack.swift; sourceTree = SOURCE_ROOT; };
+		CE914AF42B821B99003FCEC5 /* Plan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plan.swift; sourceTree = "<group>"; };
+		CE914AFC2B8227DD003FCEC5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
+		CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelDelegate.swift; sourceTree = "<group>"; };
+		CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthObserver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +197,7 @@
 				CE6E29922B7F990F00AE0101 /* List+CoreDataProperties.swift */,
 				CE6E29932B7F990F00AE0101 /* User+CoreDataClass.swift */,
 				CE6E29942B7F990F00AE0101 /* User+CoreDataProperties.swift */,
+				CE914AF42B821B99003FCEC5 /* Plan.swift */,
 				CE6E29952B7F990F00AE0101 /* Board+CoreDataClass.swift */,
 				CE6E29962B7F990F00AE0101 /* Board+CoreDataProperties.swift */,
 				CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */,
@@ -198,6 +213,11 @@
 		CE61537F2B7E840F0094D107 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				CE914AEF2B82193C003FCEC5 /* CoreDataStack.swift */,
+				CE914AFC2B8227DD003FCEC5 /* AuthService.swift */,
+				CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */,
+				CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */,
+				CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */,
 				CE6153812B7E84920094D107 /* UserActionsDelegate.swift */,
 				CE61539C2B7E8D8F0094D107 /* TaskViewModelDelegate.swift */,
 				CE6153A92B7E8F290094D107 /* ListViewModelDelegate.swift */,
@@ -217,6 +237,7 @@
 			children = (
 				CE6153302B7E04080094D107 /* SignInViewController.swift */,
 				CE27D7EB2B811C6900DD5559 /* SignUpViewController.swift */,
+				CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -357,6 +378,7 @@
 				CE6E29A22B7F990F00AE0101 /* Board+CoreDataProperties.swift in Sources */,
 				CE6153312B7E04080094D107 /* SignInViewController.swift in Sources */,
 				CE27D7EC2B811C6B00DD5559 /* SignUpViewController.swift in Sources */,
+				CE914AF02B82193C003FCEC5 /* CoreDataStack.swift in Sources */,
 				CE6153B92B7E92410094D107 /* UIIntegrationStrategy.swift in Sources */,
 				CE61532D2B7E04080094D107 /* AppDelegate.swift in Sources */,
 				CE6E299D2B7F990F00AE0101 /* List+CoreDataClass.swift in Sources */,
@@ -367,14 +389,20 @@
 				CE6153AA2B7E8F290094D107 /* ListViewModelDelegate.swift in Sources */,
 				CE61532F2B7E04080094D107 /* SceneDelegate.swift in Sources */,
 				CE6E29A12B7F990F00AE0101 /* Board+CoreDataClass.swift in Sources */,
+				CE914AF52B821B99003FCEC5 /* Plan.swift in Sources */,
+				CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */,
+				CE914B132B825891003FCEC5 /* PasswordResetViewController.swift in Sources */,
 				CE6153982B7E8C810094D107 /* BoardViewModel.swift in Sources */,
 				CE6E29A72B7F990F00AE0101 /* Task+CoreDataClass.swift in Sources */,
 				CE6153AF2B7E8FA60094D107 /* ListViewModel.swift in Sources */,
 				CE6153822B7E84920094D107 /* UserActionsDelegate.swift in Sources */,
+				CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */,
 				CE6153BE2B7E93390094D107 /* Observer.swift in Sources */,
 				CE6153A52B7E8E200094D107 /* TaskViewModel.swift in Sources */,
 				CE6E29A42B7F990F00AE0101 /* Files+CoreDataProperties.swift in Sources */,
+				CE914B0B2B823ED7003FCEC5 /* AuthViewModel.swift in Sources */,
 				CE6E299E2B7F990F00AE0101 /* List+CoreDataProperties.swift in Sources */,
+				CE914AFD2B8227DD003FCEC5 /* AuthService.swift in Sources */,
 				CE6E29A52B7F990F00AE0101 /* Workspace+CoreDataClass.swift in Sources */,
 				CE6E29A32B7F990F00AE0101 /* Files+CoreDataClass.swift in Sources */,
 			);

@@ -16,11 +16,10 @@ extension User {
         return NSFetchRequest<User>(entityName: "User")
     }
 
-    @NSManaged public var userEmail: String?
-    @NSManaged public var userID: Int64
-    @NSManaged public var userName: String?
-    @NSManaged public var userPlan: String?
-    @NSManaged public var uesrPassword: String?
+    @NSManaged public var userEmail: String
+    @NSManaged public var userName: String
+    @NSManaged public var userPlan: String
+    @NSManaged public var userPassword: String
     @NSManaged public var userWorkspaces: NSSet?
     @NSManaged public var userBoardsToOwn: NSSet?
     @NSManaged public var userTasksToExecute: NSSet?
@@ -116,4 +115,35 @@ extension User {
 
 extension User : Identifiable {
 
+}
+
+// MARK: Actions with users Method
+extension User {
+    
+    static func getAllUsers() -> NSFetchRequest<User> {
+        let request: NSFetchRequest<User> = fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "userEmail", ascending: true)]
+        return request
+    }
+    
+    static func addNewUser(userEmail: String, userName: String, userPassword: String) {
+        
+        let context = CoreDataStack.shared.persistentContainer.viewContext
+        let users = try? context.fetch(getAllUsers())
+        if let users = users {
+            for user in users {
+                if user.userEmail == userEmail {
+                    
+                }
+            }
+        }
+        
+        let user = User(context: context)
+        user.userName = userName
+        user.userEmail = userEmail
+        user.userPassword = userPassword
+        user.userPlan = Plan.basic.rawValue
+        
+        CoreDataStack.shared.saveContext()
+    }
 }

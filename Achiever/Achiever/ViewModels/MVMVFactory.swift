@@ -10,6 +10,10 @@ import UIKit
 
 class MVVMFactory {
     
+    func createAuthViewModel() -> AuthViewModelDelegate {
+        return AuthViewModel.shared
+    }
+    
     func createBoardViewModel() -> BoardViewModelDelegate {
         return BoardViewModel.shared
     }

@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import MessageUI
 
-class SignInViewController: UIViewController {
+class SignInViewController: UIViewController, MFMailComposeViewControllerDelegate {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -26,59 +27,61 @@ class SignInViewController: UIViewController {
         CGSize(width: view.frame.width, height: view.frame.height * 2)
     }
     
-    private let logoImage: UIImageView = {
+    let logoImage: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "Logo"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private let authorizationLabel: UILabel = {
+    let authorizationLabel: UILabel = {
         let label = UILabel()
         label.text = "Авторизация"
         label.textAlignment = .center
+        label.textColor = UIColor(named: "PrimaryTextLabelColor")
         label.font = UIFont.systemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let emailTextField: UITextField = {
+    let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Адрес эл.почты"
         textField.borderStyle = .roundedRect
+        textField.textColor = UIColor(named:"PrimaryTextLabelColor")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    private let passwordTextField: UITextField = {
+    let passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Пароль"
         textField.borderStyle = .roundedRect
-        textField.isSecureTextEntry = true
+        textField.textColor = UIColor(named:"PrimaryTextLabelColor")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    private let forgetPasswordButton: UIButton = {
+    let forgetPasswordButton: UIButton = {
         let button = UIButton()
         button.setTitle("Забыли пароль?", for: .normal)
-        button.setTitleColor(UIColor(named: "ComplementaryColor"), for: .normal)
+        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private let signInButton: UIButton = {
+    let signInButton: UIButton = {
         let button = UIButton()
         button.setTitle("Войти", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "ComplementaryColor")
+        button.setTitleColor(UIColor(named: "PrimaryTextButtonColor"), for: .normal)
+        button.backgroundColor = UIColor(named: "PrimaryButtonBackgroundColor")
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private let registrationButton: UIButton = {
+    let registrationButton: UIButton = {
         let button = UIButton()
         button.setTitle("Регистрация", for: .normal)
-        button.setTitleColor(UIColor(named: "ComplementaryColor"), for: .normal)
+        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -90,7 +93,7 @@ class SignInViewController: UIViewController {
     }
 
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "ViewBackgroundColor")
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -104,7 +107,9 @@ class SignInViewController: UIViewController {
         
         setupConstraints()
         
-        registrationButton.addTarget(self, action: #selector(didTapRegistrationButton), for: .touchUpInside)
+        registrationButton.addTarget(self, action: #selector(didRegistrationButtonTapped), for: .touchUpInside)
+        
+        forgetPasswordButton.addTarget(self, action: #selector(didResetPasswordButtonTaped), for: .touchUpInside)
     }
     
     func setupConstraints() {
@@ -142,9 +147,20 @@ class SignInViewController: UIViewController {
         ])
     }
     
-    @objc private func didTapRegistrationButton() {
+    @objc private func didResetPasswordButtonTaped() {
+        guard let email = emailTextField.text else { return }
+        let passwordResetViewController = PasswordResetViewController()
+        passwordResetViewController.emailTextField.text = email
+        navigationController?.pushViewController(passwordResetViewController, animated: true)
+    }
+    
+    @objc private func didSignInButtonTapped() {
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        AuthViewModel.shared.signIn(email: email, password: password)
+    }
+    
+    @objc private func didRegistrationButtonTapped() {
         navigationController?.pushViewController(SignUpViewController(), animated: true)
     }
-
 }
 

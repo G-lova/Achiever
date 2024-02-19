@@ -35,6 +35,7 @@ class SignUpViewController: UIViewController {
     private let registrationLabel: UILabel = {
         let label = UILabel()
         label.text = "Регистрация"
+        label.textColor = UIColor(named: "PrimaryTextLabelColor")
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +45,7 @@ class SignUpViewController: UIViewController {
     private let nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Имя"
+        textField.textColor = UIColor(named: "PrimaryTextLabelColor")
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -52,6 +54,7 @@ class SignUpViewController: UIViewController {
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Адрес эл.почты"
+        textField.textColor = UIColor(named: "PrimaryTextLabelColor")
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -60,6 +63,7 @@ class SignUpViewController: UIViewController {
     private let passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Пароль"
+        textField.textColor = UIColor(named: "PrimaryTextLabelColor")
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +74,8 @@ class SignUpViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Регистрация", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "ComplementaryColor")
+        button.setTitleColor(UIColor(named: "PrimaryTextButtonColor"), for: .normal)
+        button.backgroundColor = UIColor(named: "PrimaryButtonBackgroundColor")
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -78,7 +83,7 @@ class SignUpViewController: UIViewController {
     private let signInButton: UIButton = {
         let button = UIButton()
         button.setTitle("Уже есть аккаунт?", for: .normal)
-        button.setTitleColor(UIColor(named: "ComplementaryColor"), for: .normal)
+        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -90,7 +95,7 @@ class SignUpViewController: UIViewController {
     }
 
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "ViewBackgroundColor")
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -142,6 +147,6 @@ class SignUpViewController: UIViewController {
     }
     
     @objc private func didTapSignInButton() {
-        navigationController?.pushViewController(SignUpViewController(), animated: true)
+        navigationController?.pushViewController(SignInViewController(), animated: true)
     }
 }

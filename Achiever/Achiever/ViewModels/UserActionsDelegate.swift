@@ -10,6 +10,12 @@ import UIKit
 
 protocol UserActionsDelegate {
     
+    //MARK: - Authentification Actions Methods
+    func didTapSignIn()
+    func didTapSignUp()
+    func didTapResetPassword()
+    func didSendResetPasswordCode()
+    
     //MARK: - Board Actions Methods
     func didTapCreateBoard()
     func didTapEditBoard(boardID: String)

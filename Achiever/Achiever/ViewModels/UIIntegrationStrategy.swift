@@ -44,6 +44,7 @@ class UIIntegrationStrategy {
             let label = UILabel()
             label.text = "Авторизация"
             label.textAlignment = .center
+            label.textColor = UIColor(named: "PrimaryTextLabelColor")
             label.font = UIFont.systemFont(ofSize: 30)
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
@@ -53,6 +54,7 @@ class UIIntegrationStrategy {
             let textField = UITextField()
             textField.placeholder = "Адрес эл.почты"
             textField.borderStyle = .roundedRect
+            textField.textColor = UIColor(named:"PrimaryTextLabelColor")
             textField.translatesAutoresizingMaskIntoConstraints = false
             return textField
         }()
@@ -61,6 +63,7 @@ class UIIntegrationStrategy {
             let textField = UITextField()
             textField.placeholder = "Пароль"
             textField.borderStyle = .roundedRect
+            textField.textColor = UIColor(named:"PrimaryTextLabelColor")
             textField.translatesAutoresizingMaskIntoConstraints = false
             return textField
         }()
@@ -68,7 +71,7 @@ class UIIntegrationStrategy {
         let forgetPasswordButton: UIButton = {
             let button = UIButton()
             button.setTitle("Забыли пароль?", for: .normal)
-            button.setTitleColor(UIColor(named: "ComplementaryColor"), for: .normal)
+            button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
             button.translatesAutoresizingMaskIntoConstraints = false
             return button
         }()
@@ -76,8 +79,8 @@ class UIIntegrationStrategy {
         let signInButton: UIButton = {
             let button = UIButton()
             button.setTitle("Войти", for: .normal)
-            button.setTitleColor(.white, for: .normal)
-            button.backgroundColor = UIColor(named: "ComplementaryColor")
+            button.setTitleColor(UIColor(named: "PrimaryTextButtonColor"), for: .normal)
+            button.backgroundColor = UIColor(named: "PrimaryButtonBackgroundColor")
             button.translatesAutoresizingMaskIntoConstraints = false
             return button
         }()
@@ -85,12 +88,12 @@ class UIIntegrationStrategy {
         let registrationButton: UIButton = {
             let button = UIButton()
             button.setTitle("Регистрация", for: .normal)
-            button.setTitleColor(UIColor(named: "ComplementaryColor"), for: .normal)
+            button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
             button.translatesAutoresizingMaskIntoConstraints = false
             return button
         }()
 
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "ViewBackgroundColor")
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
