@@ -45,6 +45,15 @@
 		CE914B132B825891003FCEC5 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */; };
 		CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */; };
 		CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */; };
+		CEAA56B42B88EA5200379EA4 /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */; };
+		CEAA56BF2B88FEDA00379EA4 /* BoardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */; };
+		CEAA56CC2B89160E00379EA4 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */; };
+		CEBC4C382B8629160058D2FD /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C372B8629150058D2FD /* KeychainService.swift */; };
+		CEBC4C402B863AC30058D2FD /* UserDefaultsCounters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */; };
+		CEBC4C452B865B430058D2FD /* WorkspaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */; };
+		CED770112B8A0F07007528FA /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED770102B8A0F07007528FA /* TaskViewController.swift */; };
+		CEF9D8A72B89DA5800F853D2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */; };
+		CEF9D8AC2B89DB7F00F853D2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9D8AB2B89DB7F00F853D2 /* CalendarViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +118,15 @@
 		CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelDelegate.swift; sourceTree = "<group>"; };
 		CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthObserver.swift; sourceTree = "<group>"; };
+		CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewController.swift; sourceTree = "<group>"; };
+		CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCollectionViewCell.swift; sourceTree = "<group>"; };
+		CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
+		CEBC4C372B8629150058D2FD /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsCounters.swift; sourceTree = "<group>"; };
+		CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceViewController.swift; sourceTree = "<group>"; };
+		CED770102B8A0F07007528FA /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
+		CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		CEF9D8AB2B89DB7F00F853D2 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,7 +232,9 @@
 			isa = PBXGroup;
 			children = (
 				CE914AEF2B82193C003FCEC5 /* CoreDataStack.swift */,
+				CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */,
 				CE914AFC2B8227DD003FCEC5 /* AuthService.swift */,
+				CEBC4C372B8629150058D2FD /* KeychainService.swift */,
 				CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */,
 				CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */,
 				CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */,
@@ -236,8 +256,15 @@
 			isa = PBXGroup;
 			children = (
 				CE6153302B7E04080094D107 /* SignInViewController.swift */,
-				CE27D7EB2B811C6900DD5559 /* SignUpViewController.swift */,
 				CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */,
+				CE27D7EB2B811C6900DD5559 /* SignUpViewController.swift */,
+				CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */,
+				CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */,
+				CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */,
+				CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */,
+				CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */,
+				CED770102B8A0F07007528FA /* TaskViewController.swift */,
+				CEF9D8AB2B89DB7F00F853D2 /* CalendarViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -371,7 +398,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEAA56B42B88EA5200379EA4 /* BoardViewController.swift in Sources */,
 				CE61539D2B7E8D8F0094D107 /* TaskViewModelDelegate.swift in Sources */,
+				CEBC4C382B8629160058D2FD /* KeychainService.swift in Sources */,
 				CE6153B42B7E91100094D107 /* MVMVFactory.swift in Sources */,
 				CE6153372B7E04080094D107 /* Achiever.xcdatamodeld in Sources */,
 				CE61538D2B7E8C0A0094D107 /* BoardViewModelDelegate.swift in Sources */,
@@ -381,8 +410,10 @@
 				CE914AF02B82193C003FCEC5 /* CoreDataStack.swift in Sources */,
 				CE6153B92B7E92410094D107 /* UIIntegrationStrategy.swift in Sources */,
 				CE61532D2B7E04080094D107 /* AppDelegate.swift in Sources */,
+				CEF9D8AC2B89DB7F00F853D2 /* CalendarViewController.swift in Sources */,
 				CE6E299D2B7F990F00AE0101 /* List+CoreDataClass.swift in Sources */,
 				CE6E29A02B7F990F00AE0101 /* User+CoreDataProperties.swift in Sources */,
+				CEAA56BF2B88FEDA00379EA4 /* BoardCollectionViewCell.swift in Sources */,
 				CE6E29A82B7F990F00AE0101 /* Task+CoreDataProperties.swift in Sources */,
 				CE6E299F2B7F990F00AE0101 /* User+CoreDataClass.swift in Sources */,
 				CE6E29A62B7F990F00AE0101 /* Workspace+CoreDataProperties.swift in Sources */,
@@ -391,12 +422,17 @@
 				CE6E29A12B7F990F00AE0101 /* Board+CoreDataClass.swift in Sources */,
 				CE914AF52B821B99003FCEC5 /* Plan.swift in Sources */,
 				CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */,
+				CED770112B8A0F07007528FA /* TaskViewController.swift in Sources */,
 				CE914B132B825891003FCEC5 /* PasswordResetViewController.swift in Sources */,
 				CE6153982B7E8C810094D107 /* BoardViewModel.swift in Sources */,
+				CEF9D8A72B89DA5800F853D2 /* TabBarController.swift in Sources */,
+				CEBC4C452B865B430058D2FD /* WorkspaceViewController.swift in Sources */,
+				CEAA56CC2B89160E00379EA4 /* ListTableViewCell.swift in Sources */,
 				CE6E29A72B7F990F00AE0101 /* Task+CoreDataClass.swift in Sources */,
 				CE6153AF2B7E8FA60094D107 /* ListViewModel.swift in Sources */,
 				CE6153822B7E84920094D107 /* UserActionsDelegate.swift in Sources */,
 				CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */,
+				CEBC4C402B863AC30058D2FD /* UserDefaultsCounters.swift in Sources */,
 				CE6153BE2B7E93390094D107 /* Observer.swift in Sources */,
 				CE6153A52B7E8E200094D107 /* TaskViewModel.swift in Sources */,
 				CE6E29A42B7F990F00AE0101 /* Files+CoreDataProperties.swift in Sources */,
@@ -575,7 +611,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N3Z5Q3V42W;
 				INFOPLIST_FILE = Achiever/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -595,7 +631,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N3Z5Q3V42W;
 				INFOPLIST_FILE = Achiever/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

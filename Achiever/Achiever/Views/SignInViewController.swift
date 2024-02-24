@@ -47,6 +47,8 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         let textField = UITextField()
         textField.placeholder = "Адрес эл.почты"
         textField.borderStyle = .roundedRect
+        textField.textContentType = .username
+        textField.keyboardType = .emailAddress
         textField.textColor = UIColor(named:"PrimaryTextLabelColor")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -56,18 +58,20 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         let textField = UITextField()
         textField.placeholder = "Пароль"
         textField.borderStyle = .roundedRect
+        textField.textContentType = .password
+        textField.isSecureTextEntry = true
         textField.textColor = UIColor(named:"PrimaryTextLabelColor")
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    let forgetPasswordButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Забыли пароль?", for: .normal)
-        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+//    let forgetPasswordButton: UIButton = {
+//        let button = UIButton()
+//        button.setTitle("Забыли пароль?", for: .normal)
+//        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        return button
+//    }()
     
     let signInButton: UIButton = {
         let button = UIButton()
@@ -101,7 +105,7 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         contentView.addSubview(authorizationLabel)
         contentView.addSubview(emailTextField)
         contentView.addSubview(passwordTextField)
-        contentView.addSubview(forgetPasswordButton)
+//        contentView.addSubview(forgetPasswordButton)
         contentView.addSubview(signInButton)
         contentView.addSubview(registrationButton)
         
@@ -109,7 +113,7 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         
         registrationButton.addTarget(self, action: #selector(didRegistrationButtonTapped), for: .touchUpInside)
         
-        forgetPasswordButton.addTarget(self, action: #selector(didResetPasswordButtonTaped), for: .touchUpInside)
+//        forgetPasswordButton.addTarget(self, action: #selector(didResetPasswordButtonTaped), for: .touchUpInside)
     }
     
     func setupConstraints() {
@@ -131,12 +135,13 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 20),
             passwordTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             passwordTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            forgetPasswordButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            forgetPasswordButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
-            forgetPasswordButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            forgetPasswordButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+//            forgetPasswordButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            forgetPasswordButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
+//            forgetPasswordButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+//            forgetPasswordButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             signInButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            signInButton.topAnchor.constraint(equalTo: forgetPasswordButton.bottomAnchor, constant: 10),
+//            signInButton.topAnchor.constraint(equalTo: forgetPasswordButton.bottomAnchor, constant: 10),
+            signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
             signInButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
             signInButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             registrationButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

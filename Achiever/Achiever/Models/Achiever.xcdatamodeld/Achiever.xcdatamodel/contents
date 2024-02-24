@@ -4,7 +4,6 @@
         <attribute name="boardCreationDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="boardID" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="boardName" attributeType="String"/>
-        <attribute name="boardTheme" attributeType="String" defaultValueString="light"/>
         <attribute name="isArchive" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isPrivate" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="boardLists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="List" inverseName="listParentBoard" inverseEntity="List"/>
@@ -41,8 +40,8 @@
     </entity>
     <entity name="User" representedClassName="User" syncable="YES">
         <attribute name="userEmail" attributeType="String"/>
+        <attribute name="userID" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="userName" attributeType="String"/>
-        <attribute name="userPassword" attributeType="String"/>
         <attribute name="userPlan" attributeType="String" defaultValueString="basic"/>
         <relationship name="userBoardsToManage" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardManagers" inverseEntity="Board"/>
         <relationship name="userBoardsToOwn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Board" inverseName="boardOwner" inverseEntity="Board"/>
@@ -57,7 +56,7 @@
         <relationship name="workspaceOwner" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="userWorkspaces" inverseEntity="User"/>
     </entity>
     <elements>
-        <element name="Board" positionX="-184.98046875" positionY="-189.98876953125" width="128" height="208"/>
+        <element name="Board" positionX="-184.98046875" positionY="-189.98876953125" width="128" height="179"/>
         <element name="Files" positionX="-72" positionY="198" width="128" height="103"/>
         <element name="List" positionX="-273.984375" positionY="1.99951171875" width="128" height="118"/>
         <element name="Task" positionX="0.0078125" positionY="-98.0057373046875" width="128" height="208"/>

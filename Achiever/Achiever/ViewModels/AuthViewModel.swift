@@ -15,6 +15,25 @@ class AuthViewModel: AuthViewModelDelegate {
     
     private init() {}
     
+    func signUp(userName: String, email: String, password: String, errorHandler: @escaping() -> Void) {
+        
+        let context = CoreDataStack.shared.persistentContainer.viewContext
+        let users = try? context.fetch(User.getAllUsers())
+        if let users = users {
+            for user in users {
+                if user.userEmail == email {
+                    print("Данный email уже зарегистрирован")
+                    errorHandler()
+                    return
+                }
+            }
+        }
+        
+        let newUser = User.addNewUser(userEmail: email, userName: userName, userPassword: password)
+        KeychainService.shared.savePassword(password, for: email)
+        AuthService.shared.currentUser = newUser as! User
+    }
+    
     // Authentification process
     func signIn(email: String, password: String) {
         
@@ -22,7 +41,7 @@ class AuthViewModel: AuthViewModelDelegate {
         let users = try? context.fetch(User.getAllUsers())
         if let users = users {
             for user in users {
-                if user.userEmail == email && user.userPassword == password {
+                if user.userEmail == email && KeychainService.shared.getPassword(forAccount: email) == password {
                     AuthService.shared.currentUser = user
                     return
                 }

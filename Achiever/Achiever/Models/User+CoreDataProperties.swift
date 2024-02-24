@@ -16,11 +16,11 @@ extension User {
         return NSFetchRequest<User>(entityName: "User")
     }
 
+    @NSManaged public var userID: Int64
     @NSManaged public var userEmail: String
     @NSManaged public var userName: String
     @NSManaged public var userPlan: String
-    @NSManaged public var userPassword: String
-    @NSManaged public var userWorkspaces: NSSet?
+    @NSManaged public var userWorkspaces: NSSet
     @NSManaged public var userBoardsToOwn: NSSet?
     @NSManaged public var userTasksToExecute: NSSet?
     @NSManaged public var userBoardsToManage: NSSet?
@@ -122,28 +122,44 @@ extension User {
     
     static func getAllUsers() -> NSFetchRequest<User> {
         let request: NSFetchRequest<User> = fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "userEmail", ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(key: "userID", ascending: true)]
         return request
     }
     
-    static func addNewUser(userEmail: String, userName: String, userPassword: String) {
+    static func addNewUser(userEmail: String, userName: String, userPassword: String) -> NSManagedObject {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let users = try? context.fetch(getAllUsers())
-        if let users = users {
-            for user in users {
-                if user.userEmail == userEmail {
-                    
-                }
-            }
-        }
         
         let user = User(context: context)
+        if let userWithMaxID = users?.last {
+            if userWithMaxID.userID < UserDefaultsCounters.shared.userCounter {
+                user.userID = UserDefaultsCounters.shared.userCounter
+            } else {
+                user.userID = userWithMaxID.userID + 1
+            }
+        }
+        UserDefaultsCounters.shared.userCounter = user.userID
         user.userName = userName
         user.userEmail = userEmail
-        user.userPassword = userPassword
         user.userPlan = Plan.basic.rawValue
         
+        let newWorkspace = Workspace.addNewWorkspace(workspaceName: user.userName, workspaceOwner: user)
+        user.userWorkspaces.adding(newWorkspace)
+        
         CoreDataStack.shared.saveContext()
+        
+        return user
+    }
+    
+    static func loadDataFromCoreData(completion: @escaping (NSFetchedResultsController<User>) -> Void) {
+        let request = getAllUsers()
+        let fetchedResultController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: CoreDataStack.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        do {
+            try fetchedResultController.performFetch()
+            completion(fetchedResultController)
+        } catch {
+            print(error)
+        }
     }
 }
