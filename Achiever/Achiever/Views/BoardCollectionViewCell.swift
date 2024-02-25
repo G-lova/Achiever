@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import CoreData
 
 class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
     
+    var fetchedResultsController: NSFetchedResultsController<List>!
     var activeList = AuthService.shared.currentList
     var tasks: [Task] = []
-    var collectionViewController = UICollectionViewController()
+    var controller = UICollectionViewController()
     
     private lazy var listTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -63,11 +65,30 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
         for task in tasks {
             self.tasks.append(task as! Task)
         }
-        collectionViewController = controller
+        self.controller = controller
         DispatchQueue.main.async {
             self.listTableView.reloadData()
         }
-        
+    }
+    
+    func loadDataFromCoreData() {
+        List.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.fetchedResultsController = fetchedResultsController
+            self?.getTasks()
+            DispatchQueue.main.async {
+                self?.listTableView.reloadData()
+            }
+        }
+    }
+    
+    func getTasks() {
+        guard let lists = fetchedResultsController.fetchedObjects else { return }
+        for list in lists where list == self.activeList {
+            guard let tasks = list.listTasks else { return }
+            for task in tasks {
+                self.tasks.append(task as! Task)
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,7 +99,7 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
         let cell = tableView.dequeueReusableCell(withIdentifier: "listCell", for: indexPath) as! ListTableViewCell
         
         let task = tasks[indexPath.row]
-        cell.setupTableView(taskName: task.taskName)
+        cell.setupTableView(taskName: task.taskName, taskDeadline: task.taskDeadline, isFinished: task.isFinished)
         
         return cell
     }
@@ -86,7 +107,7 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let task = tasks[indexPath.row]
         AuthService.shared.currentTask = task
-        collectionViewController.navigationController?.pushViewController(TaskViewController(), animated: true)
+        controller.navigationController?.pushViewController(TaskViewController(), animated: true)
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

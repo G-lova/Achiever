@@ -141,9 +141,12 @@ class TaskViewController: UIViewController {
         contentView.addSubview(placeholderLabel)
         contentView.addSubview(textView)
         
+        setupConstraints()
     }
 
     func setupActions() {
+        
+        guard let currentTask = currentTask else { return }
         boardButton.setTitle(currentTask.taskParentList.listParentBoard.boardName, for: .normal)
         
         listButton.setTitle(currentTask.taskParentList.listName, for: .normal)
@@ -172,7 +175,44 @@ class TaskViewController: UIViewController {
         
     }
     
+    func setupConstraints() {
+        let safeArea = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            boardLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            boardLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            boardButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10),
+            boardButton.leadingAnchor.constraint(equalTo: boardLabel.trailingAnchor, constant: 10),
+            boardButton.topAnchor.constraint(equalTo: boardLabel.topAnchor, constant: 10),
+            boardButton.bottomAnchor.constraint(equalTo: boardLabel.bottomAnchor),
+            listLabel.topAnchor.constraint(equalTo: boardLabel.bottomAnchor),
+            listLabel.leadingAnchor.constraint(equalTo: boardLabel.leadingAnchor),
+            listLabel.trailingAnchor.constraint(equalTo: boardLabel.trailingAnchor),
+            listButton.leadingAnchor.constraint(equalTo: boardButton.leadingAnchor),
+            listButton.trailingAnchor.constraint(equalTo: boardButton.trailingAnchor),
+            listButton.topAnchor.constraint(equalTo: boardButton.bottomAnchor),
+            listButton.bottomAnchor.constraint(equalTo: listLabel.bottomAnchor),
+            taskNameTextField.topAnchor.constraint(equalTo: listLabel.bottomAnchor, constant: 10),
+            taskNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            taskNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10),
+            isFineshedCheckbox.topAnchor.constraint(equalTo: taskNameTextField.bottomAnchor, constant: 10),
+            isFineshedCheckbox.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            clockImageView.bottomAnchor.constraint(equalTo: isFineshedCheckbox.bottomAnchor),
+            clockImageView.leadingAnchor.constraint(equalTo: isFineshedCheckbox.trailingAnchor, constant: 5),
+            dateButton.bottomAnchor.constraint(equalTo: clockImageView.bottomAnchor),
+            dateButton.leadingAnchor.constraint(equalTo: clockImageView.trailingAnchor),
+            deleteDateButton.bottomAnchor.constraint(equalTo: dateButton.bottomAnchor),
+            deleteDateButton.leadingAnchor.constraint(equalTo: dateButton.trailingAnchor, constant: 5),
+            textView.topAnchor.constraint(equalTo: isFineshedCheckbox.bottomAnchor, constant: 5),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10),
+            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor),
+            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor)
+            
+        ])
+    }
+    
     @objc func isFinishedChanged() {
+        guard let currentTask = currentTask else { return }
         currentTask.isFinished = isFineshedCheckbox.isOn
         CoreDataStack.shared.saveContext()
     }
@@ -182,6 +222,7 @@ class TaskViewController: UIViewController {
         dateFormatter.dateFormat = "dd/MM/yyyy HH:mm"
         let selectedDate = dateFormatter.string(from: sender.date)
         
+        guard let currentTask = currentTask else { return }
         currentTask.taskDeadline = sender.date
         CoreDataStack.shared.saveContext()
         
@@ -201,12 +242,14 @@ class TaskViewController: UIViewController {
     }
     
     @objc func textViewDidChange() {
+        guard let currentTask = currentTask else { return }
         placeholderLabel.isHidden = !textView.text.isEmpty
         currentTask.taskDescription = textView.text
         CoreDataStack.shared.saveContext()
     }
     
     @objc func didDeleteDateButtonTapped() {
+        guard let currentTask = currentTask else { return }
         currentTask.taskDeadline = nil
         CoreDataStack.shared.saveContext()
         

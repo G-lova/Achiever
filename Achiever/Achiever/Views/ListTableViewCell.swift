@@ -24,14 +24,10 @@ class ListTableViewCell: UITableViewCell  {
         return label
     }()
     
-    private var textImageView = UIImageView(image: UIImage(systemName: "text"))
-    
-    private var checkboxImageView = UIImageView(image: UIImage(systemName: "checkbox"))
-    
     private var stackView: UIStackView
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        stackView = UIStackView(arrangedSubviews: [clockImageView, timerLabel, textImageView, checkboxImageView])
+        stackView = UIStackView(arrangedSubviews: [clockImageView, timerLabel])
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
     }
@@ -53,13 +49,25 @@ class ListTableViewCell: UITableViewCell  {
     func setupStack() {
         stackView.axis = .horizontal
         stackView.alignment = .fill
-        stackView.setCustomSpacing(0, after: textImageView)
+        stackView.setCustomSpacing(0, after: clockImageView)
         contentView.addSubview(stackView)
         
     }
     
-    func setupTableView(taskName: String) {
+    func setupTableView(taskName: String, taskDeadline: Date?, isFinished: Bool) {
+        let attributedString = NSAttributedString(string: "\(taskName)", attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
         taskNameLabel.text = taskName
+        if isFinished {
+            taskNameLabel.attributedText = attributedString
+            taskNameLabel.textColor = .gray
+        }
+        if let taskDeadline = taskDeadline {
+            stackView.isHidden = false
+            clockImageView.isHidden = false
+            timerLabel.text = "\(taskDeadline)"
+        } else {
+            stackView.isHidden = true
+        }
         
     }
 }

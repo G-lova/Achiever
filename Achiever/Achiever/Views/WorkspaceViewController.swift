@@ -8,30 +8,13 @@
 import UIKit
 import CoreData
 
-class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
+class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
     
     var fetchedResultController: NSFetchedResultsController<User>!
     var user = AuthService.shared.currentUser
     var activeWorkspace = AuthService.shared.currentWorkspace
     var userWorkspaces: [Workspace] = []
     var workspaceBoards: [Board] = []
-    
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.frame = view.bounds
-        scrollView.contentSize = contentSize
-        return scrollView
-    }()
-    
-    private lazy var contentView: UIView = {
-        let contentView = UIView()
-        contentView.frame.size = contentSize
-        return contentView
-    }()
-    
-    private var contentSize: CGSize {
-        CGSize(width: view.frame.width, height: view.frame.height * 2)
-    }
     
     private let workspaceLabel: UILabel = {
         let label = UILabel()
@@ -57,8 +40,6 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     private var alertTextField: UITextField?
     
-    private let boardTableView = UITableView(frame: .zero, style: .plain)
-    
     private let newBoardTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Создать новый проект"
@@ -83,12 +64,9 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
     func setupViews() {
         view.backgroundColor = UIColor(named: "ViewBackgroundColor")
         
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(workspaceLabel)
-        contentView.addSubview(workspaceButton)
-        contentView.addSubview(chevronDownButton)
-        contentView.addSubview(boardTableView)
+        view.addSubview(workspaceLabel)
+        view.addSubview(workspaceButton)
+        view.addSubview(chevronDownButton)
         
         if let activeWorkspace = activeWorkspace {
             workspaceButton.setTitle("\(activeWorkspace.workspaceName)", for: .normal)
@@ -103,8 +81,6 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         setupNavigationBar()
         setupConstraints()
         
-        boardTableView.dataSource = self
-        boardTableView.delegate = self
         newBoardTextField.delegate = self
         
         readyButton.addTarget(self, action: #selector(didReadyButtonTapped), for: .touchUpInside)
@@ -157,21 +133,21 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
     
     func setupConstraints() {
         let safeArea = view.safeAreaLayoutGuide
-        boardTableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            workspaceLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            workspaceLabel.topAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 20),
-            workspaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            workspaceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            workspaceLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            workspaceLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            workspaceLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            workspaceLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             workspaceButton.topAnchor.constraint(equalTo: workspaceLabel.bottomAnchor, constant: 10),
-            workspaceButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            workspaceButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            workspaceButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            workspaceButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             chevronDownButton.topAnchor.constraint(equalTo: workspaceButton.topAnchor),
-            chevronDownButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            boardTableView.topAnchor.constraint(equalTo: workspaceButton.bottomAnchor, constant: 10),
-            boardTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            boardTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            boardTableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
+            chevronDownButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            tableView.topAnchor.constraint(equalTo: workspaceButton.bottomAnchor, constant: 10),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
             
         ])
     }
@@ -182,7 +158,7 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
             self?.getUserWorkspaces()
             self?.getWorkspaceBoards()
             DispatchQueue.main.async {
-                self?.boardTableView.reloadData()
+                self?.tableView.reloadData()
             }
         }
     }
@@ -214,7 +190,7 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
                 AuthService.shared.currentWorkspace = workspace
                 self.workspaceButton.setTitle("\(workspace.workspaceName)", for: .normal)
                 DispatchQueue.main.async {
-                    self.boardTableView.reloadData()
+                    self.tableView.reloadData()
                 }
             }))
             menuChildren.append(UIAction(title: "----------------------", handler: {_ in
@@ -251,7 +227,7 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
                 let workspace = Workspace.addNewWorkspace(workspaceName: text, workspaceOwner: user) as! Workspace
                 self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
                 DispatchQueue.main.async {
-                    self.boardTableView.reloadData()
+                    self.tableView.reloadData()
                 }
             }
         }
@@ -271,15 +247,18 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         })
         
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
             if let text = self.alertTextField?.text {
-                guard let workspace = self.activeWorkspace else { return }
-                workspace.workspaceName = text
-                CoreDataStack.shared.saveContext()
-                AuthService.shared.currentWorkspace = workspace
-                self.activeWorkspace = AuthService.shared.currentWorkspace
-                self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
-                DispatchQueue.main.async {
-                    self.boardTableView.reloadData()
+                guard let existedWorkspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+                for workspace in existedWorkspaces where workspace == self.activeWorkspace {
+                    workspace.workspaceName = text
+                    CoreDataStack.shared.saveContext()
+                    AuthService.shared.currentWorkspace = workspace
+                    self.activeWorkspace = AuthService.shared.currentWorkspace
+                    self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
@@ -336,7 +315,7 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         guard let boardName = newBoardTextField.text, let user = user, let activeWorkspace = activeWorkspace else { return }
         let _ = Board.addNewBoard(boardName: boardName, boardOwner: user, boardWorkspace: activeWorkspace)
         DispatchQueue.main.async {
-            self.boardTableView.reloadData()
+            self.tableView.reloadData()
         }
         let tabBarController = TabBarController()
         navigationController?.pushViewController(tabBarController, animated: true)
@@ -346,29 +325,29 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         readyButton.isHidden = false
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Проекты"
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return workspaceBoards.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         let board = workspaceBoards[indexPath.row]
         cell.textLabel?.text = board.boardName
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         AuthService.shared.currentBoard = workspaceBoards[indexPath.row]
         
         let tabBarController = TabBarController()
         navigationController?.pushViewController(tabBarController, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         let stackView = UIStackView(arrangedSubviews: [newBoardTextField, readyButton])
         stackView.axis = .horizontal
