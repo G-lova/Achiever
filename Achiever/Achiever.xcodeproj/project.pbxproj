@@ -28,8 +28,6 @@
 		CE6153BE2B7E93390094D107 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6153BD2B7E93380094D107 /* Observer.swift */; };
 		CE6E299D2B7F990F00AE0101 /* List+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29912B7F990F00AE0101 /* List+CoreDataClass.swift */; };
 		CE6E299E2B7F990F00AE0101 /* List+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29922B7F990F00AE0101 /* List+CoreDataProperties.swift */; };
-		CE6E299F2B7F990F00AE0101 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29932B7F990F00AE0101 /* User+CoreDataClass.swift */; };
-		CE6E29A02B7F990F00AE0101 /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29942B7F990F00AE0101 /* User+CoreDataProperties.swift */; };
 		CE6E29A12B7F990F00AE0101 /* Board+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29952B7F990F00AE0101 /* Board+CoreDataClass.swift */; };
 		CE6E29A22B7F990F00AE0101 /* Board+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29962B7F990F00AE0101 /* Board+CoreDataProperties.swift */; };
 		CE6E29A32B7F990F00AE0101 /* Files+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */; };
@@ -49,8 +47,11 @@
 		CEAA56BF2B88FEDA00379EA4 /* BoardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */; };
 		CEAA56CC2B89160E00379EA4 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */; };
 		CEBC4C382B8629160058D2FD /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C372B8629150058D2FD /* KeychainService.swift */; };
-		CEBC4C402B863AC30058D2FD /* UserDefaultsCounters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */; };
 		CEBC4C452B865B430058D2FD /* WorkspaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */; };
+		CEC89EFA2B8B3CF80044EDB9 /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC89EF82B8B3CF80044EDB9 /* User+CoreDataClass.swift */; };
+		CEC89EFB2B8B3CF80044EDB9 /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC89EF92B8B3CF80044EDB9 /* User+CoreDataProperties.swift */; };
+		CEC89F182B8B6A400044EDB9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC89F172B8B6A400044EDB9 /* ProfileViewController.swift */; };
+		CEC89F1D2B8B8FD90044EDB9 /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC89F1C2B8B8FD90044EDB9 /* NotificationsViewController.swift */; };
 		CED770112B8A0F07007528FA /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED770102B8A0F07007528FA /* TaskViewController.swift */; };
 		CEF9D8A72B89DA5800F853D2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */; };
 		CEF9D8AC2B89DB7F00F853D2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF9D8AB2B89DB7F00F853D2 /* CalendarViewController.swift */; };
@@ -101,8 +102,6 @@
 		CE6153BD2B7E93380094D107 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
 		CE6E29912B7F990F00AE0101 /* List+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "List+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CE6E29922B7F990F00AE0101 /* List+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "List+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		CE6E29932B7F990F00AE0101 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
-		CE6E29942B7F990F00AE0101 /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CE6E29952B7F990F00AE0101 /* Board+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Board+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CE6E29962B7F990F00AE0101 /* Board+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Board+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Files+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -122,8 +121,11 @@
 		CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCollectionViewCell.swift; sourceTree = "<group>"; };
 		CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		CEBC4C372B8629150058D2FD /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
-		CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsCounters.swift; sourceTree = "<group>"; };
 		CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceViewController.swift; sourceTree = "<group>"; };
+		CEC89EF82B8B3CF80044EDB9 /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
+		CEC89EF92B8B3CF80044EDB9 /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		CEC89F172B8B6A400044EDB9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		CEC89F1C2B8B8FD90044EDB9 /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		CED770102B8A0F07007528FA /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		CEF9D8AB2B89DB7F00F853D2 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
@@ -211,19 +213,19 @@
 			isa = PBXGroup;
 			children = (
 				CE6153352B7E04080094D107 /* Achiever.xcdatamodeld */,
-				CE6E29912B7F990F00AE0101 /* List+CoreDataClass.swift */,
-				CE6E29922B7F990F00AE0101 /* List+CoreDataProperties.swift */,
-				CE6E29932B7F990F00AE0101 /* User+CoreDataClass.swift */,
-				CE6E29942B7F990F00AE0101 /* User+CoreDataProperties.swift */,
-				CE914AF42B821B99003FCEC5 /* Plan.swift */,
-				CE6E29952B7F990F00AE0101 /* Board+CoreDataClass.swift */,
-				CE6E29962B7F990F00AE0101 /* Board+CoreDataProperties.swift */,
-				CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */,
-				CE6E29982B7F990F00AE0101 /* Files+CoreDataProperties.swift */,
+				CEC89EF82B8B3CF80044EDB9 /* User+CoreDataClass.swift */,
+				CEC89EF92B8B3CF80044EDB9 /* User+CoreDataProperties.swift */,
 				CE6E29992B7F990F00AE0101 /* Workspace+CoreDataClass.swift */,
 				CE6E299A2B7F990F00AE0101 /* Workspace+CoreDataProperties.swift */,
+				CE6E29952B7F990F00AE0101 /* Board+CoreDataClass.swift */,
+				CE6E29962B7F990F00AE0101 /* Board+CoreDataProperties.swift */,
+				CE6E29912B7F990F00AE0101 /* List+CoreDataClass.swift */,
+				CE6E29922B7F990F00AE0101 /* List+CoreDataProperties.swift */,
 				CE6E299B2B7F990F00AE0101 /* Task+CoreDataClass.swift */,
 				CE6E299C2B7F990F00AE0101 /* Task+CoreDataProperties.swift */,
+				CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */,
+				CE6E29982B7F990F00AE0101 /* Files+CoreDataProperties.swift */,
+				CE914AF42B821B99003FCEC5 /* Plan.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -232,7 +234,6 @@
 			isa = PBXGroup;
 			children = (
 				CE914AEF2B82193C003FCEC5 /* CoreDataStack.swift */,
-				CEBC4C3F2B863AC30058D2FD /* UserDefaultsCounters.swift */,
 				CE914AFC2B8227DD003FCEC5 /* AuthService.swift */,
 				CEBC4C372B8629150058D2FD /* KeychainService.swift */,
 				CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */,
@@ -259,6 +260,8 @@
 				CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */,
 				CE27D7EB2B811C6900DD5559 /* SignUpViewController.swift */,
 				CEBC4C442B865B420058D2FD /* WorkspaceViewController.swift */,
+				CEC89F1C2B8B8FD90044EDB9 /* NotificationsViewController.swift */,
+				CEC89F172B8B6A400044EDB9 /* ProfileViewController.swift */,
 				CEF9D8A62B89DA5800F853D2 /* TabBarController.swift */,
 				CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */,
 				CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */,
@@ -402,6 +405,7 @@
 				CE61539D2B7E8D8F0094D107 /* TaskViewModelDelegate.swift in Sources */,
 				CEBC4C382B8629160058D2FD /* KeychainService.swift in Sources */,
 				CE6153B42B7E91100094D107 /* MVMVFactory.swift in Sources */,
+				CEC89EFB2B8B3CF80044EDB9 /* User+CoreDataProperties.swift in Sources */,
 				CE6153372B7E04080094D107 /* Achiever.xcdatamodeld in Sources */,
 				CE61538D2B7E8C0A0094D107 /* BoardViewModelDelegate.swift in Sources */,
 				CE6E29A22B7F990F00AE0101 /* Board+CoreDataProperties.swift in Sources */,
@@ -412,14 +416,14 @@
 				CE61532D2B7E04080094D107 /* AppDelegate.swift in Sources */,
 				CEF9D8AC2B89DB7F00F853D2 /* CalendarViewController.swift in Sources */,
 				CE6E299D2B7F990F00AE0101 /* List+CoreDataClass.swift in Sources */,
-				CE6E29A02B7F990F00AE0101 /* User+CoreDataProperties.swift in Sources */,
 				CEAA56BF2B88FEDA00379EA4 /* BoardCollectionViewCell.swift in Sources */,
 				CE6E29A82B7F990F00AE0101 /* Task+CoreDataProperties.swift in Sources */,
-				CE6E299F2B7F990F00AE0101 /* User+CoreDataClass.swift in Sources */,
 				CE6E29A62B7F990F00AE0101 /* Workspace+CoreDataProperties.swift in Sources */,
 				CE6153AA2B7E8F290094D107 /* ListViewModelDelegate.swift in Sources */,
+				CEC89F1D2B8B8FD90044EDB9 /* NotificationsViewController.swift in Sources */,
 				CE61532F2B7E04080094D107 /* SceneDelegate.swift in Sources */,
 				CE6E29A12B7F990F00AE0101 /* Board+CoreDataClass.swift in Sources */,
+				CEC89EFA2B8B3CF80044EDB9 /* User+CoreDataClass.swift in Sources */,
 				CE914AF52B821B99003FCEC5 /* Plan.swift in Sources */,
 				CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */,
 				CED770112B8A0F07007528FA /* TaskViewController.swift in Sources */,
@@ -432,13 +436,13 @@
 				CE6153AF2B7E8FA60094D107 /* ListViewModel.swift in Sources */,
 				CE6153822B7E84920094D107 /* UserActionsDelegate.swift in Sources */,
 				CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */,
-				CEBC4C402B863AC30058D2FD /* UserDefaultsCounters.swift in Sources */,
 				CE6153BE2B7E93390094D107 /* Observer.swift in Sources */,
 				CE6153A52B7E8E200094D107 /* TaskViewModel.swift in Sources */,
 				CE6E29A42B7F990F00AE0101 /* Files+CoreDataProperties.swift in Sources */,
 				CE914B0B2B823ED7003FCEC5 /* AuthViewModel.swift in Sources */,
 				CE6E299E2B7F990F00AE0101 /* List+CoreDataProperties.swift in Sources */,
 				CE914AFD2B8227DD003FCEC5 /* AuthService.swift in Sources */,
+				CEC89F182B8B6A400044EDB9 /* ProfileViewController.swift in Sources */,
 				CE6E29A52B7F990F00AE0101 /* Workspace+CoreDataClass.swift in Sources */,
 				CE6E29A32B7F990F00AE0101 /* Files+CoreDataClass.swift in Sources */,
 			);

@@ -16,7 +16,7 @@ extension Workspace {
         return NSFetchRequest<Workspace>(entityName: "Workspace")
     }
 
-    @NSManaged public var workspaceID: Int64
+    @NSManaged public var workspaceID: UUID
     @NSManaged public var workspaceName: String
     @NSManaged public var workspaceOwner: User
     @NSManaged public var workspaceBoards: NSSet?
@@ -56,15 +56,8 @@ extension Workspace {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let workspace = Workspace(context: context)
-        let existedWorkspaces = try? context.fetch(getAllWorkspaces())
-        if let workspaceWithMaxID = existedWorkspaces?.last {
-            if workspaceWithMaxID.workspaceID < UserDefaultsCounters.shared.workspaceCounter {
-                workspace.workspaceID = UserDefaultsCounters.shared.workspaceCounter
-            } else {
-                workspace.workspaceID = workspaceWithMaxID.workspaceID + 1
-            }
-        }
-        UserDefaultsCounters.shared.workspaceCounter = workspace.workspaceID
+        
+        workspace.workspaceID = UUID()
         workspace.workspaceName = workspaceName
         workspace.workspaceOwner = workspaceOwner
                 

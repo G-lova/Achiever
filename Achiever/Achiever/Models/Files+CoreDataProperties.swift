@@ -16,10 +16,10 @@ extension Files {
         return NSFetchRequest<Files>(entityName: "Files")
     }
 
-    @NSManaged public var fileData: Data?
-    @NSManaged public var fileID: Int64
-    @NSManaged public var fileName: String?
-    @NSManaged public var fileTask: Task?
+    @NSManaged public var fileData: Data
+    @NSManaged public var fileID: UUID
+    @NSManaged public var fileName: String
+    @NSManaged public var fileTask: Task
 
 }
 

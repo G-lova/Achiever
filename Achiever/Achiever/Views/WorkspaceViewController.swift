@@ -33,31 +33,6 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         CGSize(width: view.frame.width, height: view.frame.height * 2)
     }
     
-    
-    private let profilePhotoButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor(named: "AccentButtonBackgroundColor")
-        button.setImage(UIImage(systemName: "person"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-//        label.text = user.userName
-        label.textColor = UIColor(named: "PrimaryTextLabelColor")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let bellButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "bell.badge"), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     private let workspaceLabel: UILabel = {
         let label = UILabel()
         label.text = "Рабочее пространство:"
@@ -73,20 +48,14 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         return button
     }()
     
-    private let shevronDownButton: UIButton = {
+    private let chevronDownButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private let boardLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Проекты:"
-        label.textColor = UIColor(named: "PrimaryTextLabelColor")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private var alertTextField: UITextField?
     
     private let boardTableView = UITableView(frame: .zero, style: .plain)
     
@@ -116,65 +85,93 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubview(nameLabel)
-        contentView.addSubview(bellButton)
         contentView.addSubview(workspaceLabel)
         contentView.addSubview(workspaceButton)
-        contentView.addSubview(shevronDownButton)
-        contentView.addSubview(boardLabel)
+        contentView.addSubview(chevronDownButton)
         contentView.addSubview(boardTableView)
-        contentView.addSubview(newBoardTextField)
-        contentView.addSubview(readyButton)
         
-        nameLabel.text = "\(user.userName)"
-        workspaceButton.setTitle("\(activeWorkspace.workspaceName)", for: .normal)
+        if let activeWorkspace = activeWorkspace {
+            workspaceButton.setTitle("\(activeWorkspace.workspaceName)", for: .normal)
+        } else {
+            let profileViewController = ProfileViewController()
+            
+            addChild(profileViewController)
+            view.addSubview(profileViewController.view)
+            profileViewController.didMove(toParent: self)
+        }
                 
+        setupNavigationBar()
         setupConstraints()
         
         boardTableView.dataSource = self
         boardTableView.delegate = self
         newBoardTextField.delegate = self
         
+        readyButton.addTarget(self, action: #selector(didReadyButtonTapped), for: .touchUpInside)
+        
         loadDataFromCoreData()
         didWorkspaceButtonTapped()
         
-        readyButton.addTarget(self, action: #selector(didReadyButtonTapped), for: .touchUpInside)
         
     }
     
+    func setupNavigationBar() {
+        
+        let profilePhotoButton: UIButton = {
+            let button = UIButton()
+            button.backgroundColor = UIColor(named: "AccentButtonBackgroundColor")
+            button.setImage(UIImage(systemName: "person.fill"), for: .normal)
+            button.layer.cornerRadius = button.frame.size.width / 2
+            button.layer.masksToBounds = true
+            return button
+        }()
+        
+        let nameButton: UIButton = {
+            let button = UIButton()
+            button.setTitleColor(UIColor(named: "PrimaryTextLabelColor"), for: .normal)
+            if let user = user {
+                button.setTitle("\(user.userName)", for: .normal)
+            }
+            return button
+        }()
+        
+        profilePhotoButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
+        
+        nameButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
+        
+        let stackView: UIStackView = {
+            let stackView = UIStackView(arrangedSubviews: [profilePhotoButton, nameButton])
+            stackView.axis = .horizontal
+            stackView.alignment = .center
+            return stackView
+        }()
+        
+        let bellButton = UIBarButtonItem(image: UIImage(systemName: "bell.badge"), style: .plain, target: self, action: #selector(bellButtonTapped))
+        
+        let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.right"), style: .plain, target: self, action: #selector(backButtonTapped))
+        
+        self.navigationItem.backBarButtonItem?.accessibilityElementsHidden = true
+        self.navigationItem.leftBarButtonItem?.customView = stackView
+        self.navigationItem.rightBarButtonItems = [bellButton, backButton]
+    }
+    
     func setupConstraints() {
+        let safeArea = view.safeAreaLayoutGuide
         boardTableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            profilePhotoButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
-            profilePhotoButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            profilePhotoButton.widthAnchor.constraint(equalToConstant: 50),
-            profilePhotoButton.heightAnchor.constraint(equalTo: profilePhotoButton.widthAnchor),
-            nameLabel.topAnchor.constraint(equalTo: profilePhotoButton.topAnchor, constant: 20),
-            nameLabel.heightAnchor.constraint(equalTo: profilePhotoButton.heightAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: profilePhotoButton.trailingAnchor, constant: 10),
-            bellButton.topAnchor.constraint(equalTo: profilePhotoButton.topAnchor),
-            bellButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             workspaceLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            workspaceLabel.topAnchor.constraint(equalTo: profilePhotoButton.bottomAnchor, constant: 20),
+            workspaceLabel.topAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 20),
             workspaceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             workspaceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             workspaceButton.topAnchor.constraint(equalTo: workspaceLabel.bottomAnchor, constant: 10),
             workspaceButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             workspaceButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            shevronDownButton.topAnchor.constraint(equalTo: workspaceButton.topAnchor),
-            shevronDownButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            boardLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            boardLabel.topAnchor.constraint(equalTo: workspaceButton.bottomAnchor, constant: 20),
-            boardLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            boardLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            boardTableView.topAnchor.constraint(equalTo: boardLabel.bottomAnchor, constant: 10),
+            chevronDownButton.topAnchor.constraint(equalTo: workspaceButton.topAnchor),
+            chevronDownButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            boardTableView.topAnchor.constraint(equalTo: workspaceButton.bottomAnchor, constant: 10),
             boardTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             boardTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            newBoardTextField.topAnchor.constraint(equalTo: boardTableView.bottomAnchor),
-            newBoardTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            newBoardTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            readyButton.topAnchor.constraint(equalTo: boardTableView.bottomAnchor),
-            readyButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
+            boardTableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
             
         ])
     }
@@ -193,7 +190,7 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
     func getUserWorkspaces() {
         guard let users = fetchedResultController.fetchedObjects else { return }
         for user in users where user == self.user {
-            let workspaces = user.userWorkspaces
+            guard let workspaces = user.userWorkspaces else { return }
             for workspace in workspaces {
                 self.userWorkspaces.append(workspace as! Workspace)
             }
@@ -220,25 +217,123 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
                     self.boardTableView.reloadData()
                 }
             }))
-            menuChildren.append(UIAction(title: "Создать новое пространство", handler: {_ in
-                
+            menuChildren.append(UIAction(title: "----------------------", handler: {_ in
+                print()
+            }))
+            menuChildren.append(UIAction(title: "Создать пространство", handler: {_ in
+                self.addWorkspace()
+            }))
+            menuChildren.append(UIAction(title: "Редактировать пространство", handler: {_ in
+                self.updateWorkspace()
+            }))
+            menuChildren.append(UIAction(title: "Удалить пространство", handler: {_ in
+                self.deleteWorkspace()
             }))
             
             let menu = UIMenu(title: "", children: menuChildren)
             workspaceButton.menu = menu
-            shevronDownButton.menu = menu
+            chevronDownButton.menu = menu
+            
+            workspaceButton.showsMenuAsPrimaryAction = true
+            chevronDownButton.showsMenuAsPrimaryAction = true
         }
-                
-//        if let menuViewController = menu.menuViewController {
-//            menuViewController.modalPresentationStyle = .popover
-//            menuViewController.popoverPresentationController?.sourceView = workspaceButton
-//            menuViewController.popoverPresentationController?.sourceRect = workspaceButton.bounds
-//            present(menuViewController, animated: true, completion: nil)
-//        }
+    }
+    
+    func addWorkspace() {
+        let alert = UIAlertController(title: "Введите название пространства", message: "", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { (alertTextField) in
+            self.alertTextField = alertTextField
+        })
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            if let text = self.alertTextField?.text {
+                guard let user = self.user else { return }
+                let workspace = Workspace.addNewWorkspace(workspaceName: text, workspaceOwner: user) as! Workspace
+                self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
+                DispatchQueue.main.async {
+                    self.boardTableView.reloadData()
+                }
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+    }
+    
+    func updateWorkspace() {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { (alertTextField) in
+            guard let workspace = self.activeWorkspace else { return }
+            alertTextField.text = workspace.workspaceName
+            self.alertTextField = alertTextField
+        })
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            if let text = self.alertTextField?.text {
+                guard let workspace = self.activeWorkspace else { return }
+                workspace.workspaceName = text
+                CoreDataStack.shared.saveContext()
+                AuthService.shared.currentWorkspace = workspace
+                self.activeWorkspace = AuthService.shared.currentWorkspace
+                self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
+                DispatchQueue.main.async {
+                    self.boardTableView.reloadData()
+                }
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+    }
+    
+    func deleteWorkspace() {
+        let alert = UIAlertController(title: "Вы уверены, что хотите удалить проект?", message: "", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            guard let workspace = self.activeWorkspace else { return }
+            CoreDataStack.shared.deleteContext(object: workspace as Workspace)
+            
+            AuthService.shared.currentWorkspace = nil
+            
+            let profileViewController = ProfileViewController()
+            
+            self.addChild(profileViewController)
+            self.view.addSubview(profileViewController.view)
+            profileViewController.didMove(toParent: self)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+    }
+    
+    @objc func photoButtonTapped() {
+        navigationController?.pushViewController(ProfileViewController(), animated: true)
+    }
+    
+    @objc func bellButtonTapped() {
+        navigationController?.pushViewController(NotificationsViewController(), animated: true)
+    }
+    
+    @objc func backButtonTapped() {
+        let animation = CATransition()
+        animation.duration = 0.5
+        animation.type = .push
+        animation.subtype = .fromLeft
+        
+        navigationController?.view.layer.add(animation, forKey: nil)
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func didReadyButtonTapped() {
-        guard let boardName = newBoardTextField.text else { return }
+        guard let boardName = newBoardTextField.text, let user = user, let activeWorkspace = activeWorkspace else { return }
         let _ = Board.addNewBoard(boardName: boardName, boardOwner: user, boardWorkspace: activeWorkspace)
         DispatchQueue.main.async {
             self.boardTableView.reloadData()
@@ -251,8 +346,12 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         readyButton.isHidden = false
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Проекты"
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userWorkspaces.count
+        return workspaceBoards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -267,6 +366,15 @@ class WorkspaceViewController: UIViewController, UITextFieldDelegate, UITableVie
         
         let tabBarController = TabBarController()
         navigationController?.pushViewController(tabBarController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        let stackView = UIStackView(arrangedSubviews: [newBoardTextField, readyButton])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        return stackView
     }
     
 }

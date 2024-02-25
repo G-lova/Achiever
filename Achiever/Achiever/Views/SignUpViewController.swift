@@ -66,6 +66,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         let label = UILabel()
         label.textColor = .red
         label.font = UIFont.systemFont(ofSize: 10)
+        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -94,8 +95,10 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     private let passwordsMissmatchLabel: UILabel = {
         let label = UILabel()
+        label.text = "Пароли не совпадают"
         label.textColor = .red
         label.font = UIFont.systemFont(ofSize: 10)
+        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -203,11 +206,12 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         if !emailTest.evaluate(with: proposedText) && proposedText != "" {
             // Неверный формат email
             errorEmailLabel.text = "Неверный формат email"
+            errorEmailLabel.isHidden = false
             emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
             return false
         }
-        errorEmailLabel.text = ""
-        emailTextField.layer.borderColor = CGColor(red: 0, green: 1, blue: 0, alpha: 1)
+        errorEmailLabel.isHidden = true
+//        emailTextField.layer.borderColor = CGColor(red: 0, green: 1, blue: 0, alpha: 1)
         return true
     }
     
@@ -219,12 +223,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         guard let userName = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text else { return }
         
         if password != repeatPasswordTextField.text {
-            passwordsMissmatchLabel.text = "Пароли не совпадают"
+            passwordsMissmatchLabel.isHidden = false
             repeatPasswordTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
         }
         
         AuthViewModel.shared.signUp(userName: userName, email: email, password: password, errorHandler: {
             self.errorEmailLabel.text = "Данный email уже зарегистрирован"
+            self.errorEmailLabel.isHidden = false
             self.emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
         })
                 

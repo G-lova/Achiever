@@ -22,7 +22,7 @@ extension Task {
     @NSManaged public var taskCreationDate: Date
     @NSManaged public var taskDeadline: Date?
     @NSManaged public var taskDescription: String?
-    @NSManaged public var taskID: Int64
+    @NSManaged public var taskID: UUID
     @NSManaged public var taskName: String
     @NSManaged public var taskParentList: List
     @NSManaged public var taskExecutor: NSSet?
@@ -80,15 +80,8 @@ extension Task {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let task = Task(context: context)
-        let existedTasks = try? context.fetch(getAllTasks())
-        if let taskWithMaxID = existedTasks?.last {
-            if taskWithMaxID.taskID < UserDefaultsCounters.shared.taskCounter {
-                task.taskID = UserDefaultsCounters.shared.taskCounter
-            } else {
-                task.taskID = taskWithMaxID.taskID + 1
-            }
-        }
-        UserDefaultsCounters.shared.taskCounter = task.taskID
+        
+        task.taskID = UUID()
         task.taskName = taskName
         task.taskParentList = taskParentList
         task.taskCreationDate = Date()

@@ -19,7 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let signInViewController = SignInViewController()
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = UINavigationController(rootViewController: signInViewController)
+        if AuthService.shared.isLoggedIn {
+            window?.rootViewController = UINavigationController(rootViewController: TabBarController())
+        } else {
+            window?.rootViewController = UINavigationController(rootViewController: signInViewController)
+        }
         window?.makeKeyAndVisible()
     }
 

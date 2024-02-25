@@ -106,7 +106,7 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
         
         let listNameLabel: UILabel = {
             let label = UILabel()
-            label.text = activeList.listName
+            if let list = activeList { label.text = list.listName }
             return label
         }()
         

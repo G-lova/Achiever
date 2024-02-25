@@ -31,24 +31,29 @@ class AuthViewModel: AuthViewModelDelegate {
         
         let newUser = User.addNewUser(userEmail: email, userName: userName, userPassword: password)
         KeychainService.shared.savePassword(password, for: email)
-        AuthService.shared.currentUser = newUser as! User
+        AuthService.shared.logIn(user: newUser as! User)
     }
     
     // Authentification process
-    func signIn(email: String, password: String) {
+    func signIn(email: String, password: String, errorHandler: @escaping(String) -> Void) {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let users = try? context.fetch(User.getAllUsers())
         if let users = users {
-            for user in users {
-                if user.userEmail == email && KeychainService.shared.getPassword(forAccount: email) == password {
-                    AuthService.shared.currentUser = user
-                    return
+            for user in users where user.userEmail == email {
+                if KeychainService.shared.getPassword(forAccount: email) == password {
+                AuthService.shared.logIn(user: user)
+                return
+                } else {
+                    let error = "Неверный пароль"
+                    errorHandler(error)
                 }
             }
-            print("Неверный пароль")
+            let error = "Данный email еще не зарегистрирован"
+            errorHandler(error)
         } else {
-            print("Неверный пароль")
+            let error = "Данный email еще не зарегистрирован"
+            errorHandler(error)
         }
     }
     

@@ -17,7 +17,7 @@ extension Board {
     }
 
     @NSManaged public var boardCreationDate: Date
-    @NSManaged public var boardID: Int64
+    @NSManaged public var boardID: UUID
     @NSManaged public var boardName: String
     @NSManaged public var isArchive: Bool
     @NSManaged public var isPrivate: Bool
@@ -96,15 +96,8 @@ extension Board {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let board = Board(context: context)
-        let existedBoards = try? context.fetch(getAllBoards())
-        if let boardWithMaxID = existedBoards?.last {
-            if boardWithMaxID.boardID < UserDefaultsCounters.shared.boardCounter {
-                board.boardID = UserDefaultsCounters.shared.boardCounter
-            } else {
-                board.boardID = boardWithMaxID.boardID + 1
-            }
-        }
-        UserDefaultsCounters.shared.boardCounter = board.boardID
+        
+        board.boardID = UUID()
         board.boardName = boardName
         board.boardOwner = boardOwner
         board.boardWorkspace = boardWorkspace

@@ -85,12 +85,42 @@ class TaskViewController: UIViewController {
         datePicker.minimumDate = Date()
         return datePicker
     }()
+    
+    private var deleteDateButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Удалить дату", for: .normal)
+        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
+        return button
+    }()
+    
+    private let placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Описание задачи..."
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.sizeToFit()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private var textView: UITextView = {
+        let textView = UITextView()
+        textView.font = UIFont.systemFont(ofSize: 18)
+        textView.textColor = UIColor(named: "PrimaryTextLabelColor")
+        textView.backgroundColor = UIColor(named: "ViewBackgroundColor")
+        textView.isEditable = true
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.autoresizingMask = [.flexibleHeight]
+        return textView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Редактирование задачи"
         
+        setupViews()
+        setupActions()
 
     }
     
@@ -107,23 +137,41 @@ class TaskViewController: UIViewController {
         contentView.addSubview(isFineshedCheckbox)
         contentView.addSubview(clockImageView)
         contentView.addSubview(dateButton)
+        contentView.addSubview(deleteDateButton)
+        contentView.addSubview(placeholderLabel)
+        contentView.addSubview(textView)
         
+    }
+
+    func setupActions() {
         boardButton.setTitle(currentTask.taskParentList.listParentBoard.boardName, for: .normal)
+        
         listButton.setTitle(currentTask.taskParentList.listName, for: .normal)
+        
         taskNameTextField.text = currentTask.taskName
+        
         isFineshedCheckbox.isOn = currentTask.isFinished
         isFineshedCheckbox.addTarget(self, action: #selector(isFinishedChanged), for: .valueChanged)
+        
         if let deadline = currentTask.taskDeadline {
             dateButton.setTitle("\(deadline)", for: .normal)
+            deleteDateButton.isHidden = false
         } else {
-            dateButton.setImage(UIImage(systemName: "calendar"), for: .normal)
+            dateButton.setTitle("Установить дату выполнения", for: .normal)
+            deleteDateButton.isHidden = true
         }
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped(_:)))
         dateButton.addGestureRecognizer(tapGestureRecognizer)
         
+        placeholderLabel.isHidden = !textView.text.isEmpty
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidChange), name: UITextView.textDidChangeNotification, object: textView)
+        
+        deleteDateButton.addTarget(self, action: #selector(didDeleteDateButtonTapped), for: .touchUpInside)
+        
     }
-
+    
     @objc func isFinishedChanged() {
         currentTask.isFinished = isFineshedCheckbox.isOn
         CoreDataStack.shared.saveContext()
@@ -134,11 +182,15 @@ class TaskViewController: UIViewController {
         dateFormatter.dateFormat = "dd/MM/yyyy HH:mm"
         let selectedDate = dateFormatter.string(from: sender.date)
         
+        currentTask.taskDeadline = sender.date
+        CoreDataStack.shared.saveContext()
+        
         dateButton.setTitle(selectedDate, for: .normal)
+        deleteDateButton.isHidden = false
     }
     
     @objc func dateButtonTapped(_ sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Выберите дату", message: "", preferredStyle: .actionSheet)
         
         let datePickerContainer = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 200))
         datePickerContainer.addSubview(datePicker)
@@ -146,6 +198,20 @@ class TaskViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         alert.view.addSubview(datePickerContainer)
         present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func textViewDidChange() {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+        currentTask.taskDescription = textView.text
+        CoreDataStack.shared.saveContext()
+    }
+    
+    @objc func didDeleteDateButtonTapped() {
+        currentTask.taskDeadline = nil
+        CoreDataStack.shared.saveContext()
+        
+        dateButton.setTitle("Установить дату выполнения", for: .normal)
+        deleteDateButton.isHidden = true
     }
 
 }

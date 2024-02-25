@@ -2,7 +2,7 @@
 //  User+CoreDataProperties.swift
 //  Achiever
 //
-//  Created by User on 16.02.2024.
+//  Created by User on 25.02.2024.
 //
 //
 
@@ -16,66 +16,15 @@ extension User {
         return NSFetchRequest<User>(entityName: "User")
     }
 
-    @NSManaged public var userID: Int64
     @NSManaged public var userEmail: String
+    @NSManaged public var userID: UUID
     @NSManaged public var userName: String
     @NSManaged public var userPlan: String
-    @NSManaged public var userWorkspaces: NSSet
-    @NSManaged public var userBoardsToOwn: NSSet?
-    @NSManaged public var userTasksToExecute: NSSet?
     @NSManaged public var userBoardsToManage: NSSet?
+    @NSManaged public var userBoardsToOwn: NSSet?
     @NSManaged public var userBoardsToRead: NSSet?
-
-}
-
-// MARK: Generated accessors for userWorkspaces
-extension User {
-
-    @objc(addUserWorkspacesObject:)
-    @NSManaged public func addToUserWorkspaces(_ value: Workspace)
-
-    @objc(removeUserWorkspacesObject:)
-    @NSManaged public func removeFromUserWorkspaces(_ value: Workspace)
-
-    @objc(addUserWorkspaces:)
-    @NSManaged public func addToUserWorkspaces(_ values: NSSet)
-
-    @objc(removeUserWorkspaces:)
-    @NSManaged public func removeFromUserWorkspaces(_ values: NSSet)
-
-}
-
-// MARK: Generated accessors for userBoardsToOwn
-extension User {
-
-    @objc(addUserBoardsToOwnObject:)
-    @NSManaged public func addToUserBoardsToOwn(_ value: Board)
-
-    @objc(removeUserBoardsToOwnObject:)
-    @NSManaged public func removeFromUserBoardsToOwn(_ value: Board)
-
-    @objc(addUserBoardsToOwn:)
-    @NSManaged public func addToUserBoardsToOwn(_ values: NSSet)
-
-    @objc(removeUserBoardsToOwn:)
-    @NSManaged public func removeFromUserBoardsToOwn(_ values: NSSet)
-
-}
-
-// MARK: Generated accessors for userTasksToExecute
-extension User {
-
-    @objc(addUserTasksToExecuteObject:)
-    @NSManaged public func addToUserTasksToExecute(_ value: Task)
-
-    @objc(removeUserTasksToExecuteObject:)
-    @NSManaged public func removeFromUserTasksToExecute(_ value: Task)
-
-    @objc(addUserTasksToExecute:)
-    @NSManaged public func addToUserTasksToExecute(_ values: NSSet)
-
-    @objc(removeUserTasksToExecute:)
-    @NSManaged public func removeFromUserTasksToExecute(_ values: NSSet)
+    @NSManaged public var userTasksToExecute: NSSet?
+    @NSManaged public var userWorkspaces: NSSet?
 
 }
 
@@ -96,6 +45,23 @@ extension User {
 
 }
 
+// MARK: Generated accessors for userBoardsToOwn
+extension User {
+
+    @objc(addUserBoardsToOwnObject:)
+    @NSManaged public func addToUserBoardsToOwn(_ value: Board)
+
+    @objc(removeUserBoardsToOwnObject:)
+    @NSManaged public func removeFromUserBoardsToOwn(_ value: Board)
+
+    @objc(addUserBoardsToOwn:)
+    @NSManaged public func addToUserBoardsToOwn(_ values: NSSet)
+
+    @objc(removeUserBoardsToOwn:)
+    @NSManaged public func removeFromUserBoardsToOwn(_ values: NSSet)
+
+}
+
 // MARK: Generated accessors for userBoardsToRead
 extension User {
 
@@ -110,6 +76,40 @@ extension User {
 
     @objc(removeUserBoardsToRead:)
     @NSManaged public func removeFromUserBoardsToRead(_ values: NSSet)
+
+}
+
+// MARK: Generated accessors for userTasksToExecute
+extension User {
+
+    @objc(addUserTasksToExecuteObject:)
+    @NSManaged public func addToUserTasksToExecute(_ value: Task)
+
+    @objc(removeUserTasksToExecuteObject:)
+    @NSManaged public func removeFromUserTasksToExecute(_ value: Task)
+
+    @objc(addUserTasksToExecute:)
+    @NSManaged public func addToUserTasksToExecute(_ values: NSSet)
+
+    @objc(removeUserTasksToExecute:)
+    @NSManaged public func removeFromUserTasksToExecute(_ values: NSSet)
+
+}
+
+// MARK: Generated accessors for userWorkspaces
+extension User {
+
+    @objc(addUserWorkspacesObject:)
+    @NSManaged public func addToUserWorkspaces(_ value: Workspace)
+
+    @objc(removeUserWorkspacesObject:)
+    @NSManaged public func removeFromUserWorkspaces(_ value: Workspace)
+
+    @objc(addUserWorkspaces:)
+    @NSManaged public func addToUserWorkspaces(_ values: NSSet)
+
+    @objc(removeUserWorkspaces:)
+    @NSManaged public func removeFromUserWorkspaces(_ values: NSSet)
 
 }
 
@@ -129,23 +129,15 @@ extension User {
     static func addNewUser(userEmail: String, userName: String, userPassword: String) -> NSManagedObject {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
-        let users = try? context.fetch(getAllUsers())
-        
         let user = User(context: context)
-        if let userWithMaxID = users?.last {
-            if userWithMaxID.userID < UserDefaultsCounters.shared.userCounter {
-                user.userID = UserDefaultsCounters.shared.userCounter
-            } else {
-                user.userID = userWithMaxID.userID + 1
-            }
-        }
-        UserDefaultsCounters.shared.userCounter = user.userID
+        
+        user.userID = UUID()
         user.userName = userName
         user.userEmail = userEmail
         user.userPlan = Plan.basic.rawValue
         
         let newWorkspace = Workspace.addNewWorkspace(workspaceName: user.userName, workspaceOwner: user)
-        user.userWorkspaces.adding(newWorkspace)
+        user.userWorkspaces?.adding(newWorkspace)
         
         CoreDataStack.shared.saveContext()
         

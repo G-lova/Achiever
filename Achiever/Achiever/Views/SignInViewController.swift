@@ -65,6 +65,15 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         return textField
     }()
     
+    let errorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .red
+        label.font = UIFont.systemFont(ofSize: 10)
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
 //    let forgetPasswordButton: UIButton = {
 //        let button = UIButton()
 //        button.setTitle("Забыли пароль?", for: .normal)
@@ -105,6 +114,7 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         contentView.addSubview(authorizationLabel)
         contentView.addSubview(emailTextField)
         contentView.addSubview(passwordTextField)
+        contentView.addSubview(errorLabel)
 //        contentView.addSubview(forgetPasswordButton)
         contentView.addSubview(signInButton)
         contentView.addSubview(registrationButton)
@@ -135,13 +145,17 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
             passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 20),
             passwordTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             passwordTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            errorLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            errorLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
+            errorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            errorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 //            forgetPasswordButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 //            forgetPasswordButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 10),
 //            forgetPasswordButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
 //            forgetPasswordButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             signInButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 //            signInButton.topAnchor.constraint(equalTo: forgetPasswordButton.bottomAnchor, constant: 10),
-            signInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 20),
+            signInButton.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 20),
             signInButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
             signInButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             registrationButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -161,7 +175,10 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
     
     @objc private func didSignInButtonTapped() {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
-        AuthViewModel.shared.signIn(email: email, password: password)
+        AuthViewModel.shared.signIn(email: email, password: password, errorHandler: { error in
+            self.errorLabel.text = error
+            self.errorLabel.isHidden = false
+        })
     }
     
     @objc private func didRegistrationButtonTapped() {

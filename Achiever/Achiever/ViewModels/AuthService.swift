@@ -11,52 +11,60 @@ import  CoreData
 class AuthService {
     static let shared = AuthService()
     
-    var currentUser: User {
+    var isLoggedIn: Bool = false
+    
+    func logIn(user: User) {
+        isLoggedIn = true
+        currentUser = user
+    }
+    
+    func logOut() {
+        isLoggedIn = false
+        currentUser = nil
+    }
+    
+    var currentUser: User? {
         get {
-            return UserDefaults.standard.object(forKey: "currentUser") as! User
+            return UserDefaults.standard.object(forKey: "currentUser") as? User
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentUser")
         }
     }
     
-    var currentWorkspace: Workspace {
+    var currentWorkspace: Workspace? {
         get {
-            return UserDefaults.standard.object(forKey: "currentWorkspace") as! Workspace
+            return UserDefaults.standard.object(forKey: "currentWorkspace") as? Workspace
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentWorkspace")
         }
     }
     
-    var currentBoard: Board {
+    var currentBoard: Board? {
         get {
-            return UserDefaults.standard.object(forKey: "currentBoard") as! Board
+            return UserDefaults.standard.object(forKey: "currentBoard") as? Board
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentBoard")
         }
     }
     
-    var currentList: List {
+    var currentList: List? {
         get {
-            return UserDefaults.standard.object(forKey: "currentList") as! List
+            return UserDefaults.standard.object(forKey: "currentList") as? List
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentList")
         }
     }
     
-    var currentTask: Task {
+    var currentTask: Task? {
         get {
-            return UserDefaults.standard.object(forKey: "currentTask") as! Task
+            return UserDefaults.standard.object(forKey: "currentTask") as? Task
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentTask")
         }
     }
-    
-//    func logOut() {
-//        currentUser = nil
-//    }
 }

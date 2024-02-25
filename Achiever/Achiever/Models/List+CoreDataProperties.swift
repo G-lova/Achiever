@@ -17,7 +17,7 @@ extension List {
     }
 
     @NSManaged public var listCreationDate: Date
-    @NSManaged public var listID: Int64
+    @NSManaged public var listID: UUID
     @NSManaged public var listName: String
     @NSManaged public var listParentBoard: Board
     @NSManaged public var listTasks: NSSet?
@@ -57,15 +57,8 @@ extension List {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
         let list = List(context: context)
-        let existedLists = try? context.fetch(getAllLists())
-        if let listWithMaxID = existedLists?.last {
-            if listWithMaxID.listID < UserDefaultsCounters.shared.listCounter {
-                list.listID = UserDefaultsCounters.shared.listCounter
-            } else {
-                list.listID = listWithMaxID.listID + 1
-            }
-        }
-        UserDefaultsCounters.shared.listCounter = list.listID
+        
+        list.listID = UUID()
         list.listName = listName
         list.listParentBoard = listParentBoard
         list.listCreationDate = Date()
