@@ -12,12 +12,12 @@ import CoreData
 class BoardViewController: UICollectionViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
     
-    var fetchedResultsController: NSFetchedResultsController<User>!
-    let currentUser = AuthService.shared.currentUser
-    var currentBoard = AuthService.shared.currentBoard
-    var userWorkspaces: [Workspace] = []
-    var boards: [Board] = []
-    var boardLists: [List] = []
+    var userFetchedResultsController: NSFetchedResultsController<User>!
+    var workspaceFetchedResultsController: NSFetchedResultsController<Workspace>!
+    var boardFetchedResultsController: NSFetchedResultsController<Board>!
+    var listFetchedResultsController: NSFetchedResultsController<List>!
+    
+    var userWorkspaces: [Workspace?] = []
 
     private let reuseIdentifier = "BoardCell"
     
@@ -59,7 +59,8 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(view.frame.size.height))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: boardLists.count)
+        guard let boards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards()) else { return }
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: boards.count)
         let section = NSCollectionLayoutSection(group: group)
         let layout = UICollectionViewCompositionalLayout(section: section)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -81,14 +82,16 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
         self.navigationItem.rightBarButtonItems = [searchButton]
         
         let boardButton = UIButton()
-        if let currentBoard = currentBoard {
-            boardButton.setTitle("\(currentBoard.boardName)", for: .normal)
-        } else {
+        guard let boards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards()) else {
             let workspaceViewController = WorkspaceViewController()
             
             addChild(workspaceViewController)
             view.addSubview(workspaceViewController.view)
             workspaceViewController.didMove(toParent: self)
+            return
+        }
+        for board in boards where "\(board.boardID)" == AuthService.shared.currentBoard {
+            boardButton.setTitle("\(board.boardName)", for: .normal)
         }
         let shevronButton = UIButton()
         shevronButton.setImage(UIImage(systemName: "shevron.down"), for: .normal)
@@ -106,16 +109,16 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
         // Setup menu
         var menuChildren: [UIMenuElement] = []
         
-        for board in self.boards where board != currentBoard {
-            menuChildren.append(UIAction(title: "\(board.boardName)", handler: {_ in
-                AuthService.shared.currentBoard = board
-                boardButton.setTitle("\(board.boardName)", for: .normal)
+        for board in boards where "\(board.boardID)" != AuthService.shared.currentBoard {
+            menuChildren.append(UIAction(title: board.boardName, handler: {_ in
+                AuthService.shared.currentBoard = "\(board.boardID)"
+                boardButton.setTitle(board.boardName, for: .normal)
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
                 }
             }))
-            menuChildren.append(UIAction(title: "-------------------", handler: {_ in
-                print()
+            menuChildren.append(UIAction(title: "--------------------", handler: {_ in
+                
             }))
             menuChildren.append(UIAction(title: "Создать проект", handler: {_ in
                 self.addBoard()
@@ -133,6 +136,8 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
             let menu = UIMenu(title: "", children: menuChildren)
             boardButton.menu = menu
             shevronButton.menu = menu
+            boardButton.showsMenuAsPrimaryAction = true
+            shevronButton.showsMenuAsPrimaryAction = true
         }
     }
     
@@ -158,45 +163,39 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
     }
     
     func loadDataFromCoreData() {
+        // get users
         User.loadDataFromCoreData() { [weak self] fetchedResultsController in
-            self?.fetchedResultsController = fetchedResultsController
-            self?.getUserWorkspaces()
-            self?.getWorkspaceBoards()
-            self?.getBoardLists()
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-            }
+            self?.userFetchedResultsController = fetchedResultsController
+        }
+        // get workspaces
+        Workspace.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.workspaceFetchedResultsController = fetchedResultsController
+        }
+        // get boards
+        Board.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.boardFetchedResultsController = fetchedResultsController
+        }
+        // get lists
+        List.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.listFetchedResultsController = fetchedResultsController
+        }
+        getUserWorkspaces()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
         }
     }
     
     func getUserWorkspaces() {
-        guard let users = fetchedResultsController.fetchedObjects else { return }
-        for user in users where user == self.currentUser {
+        guard let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers()) else { return }
+        for user in users where "\(user.userID)" == AuthService.shared.currentUser {
             guard let workspaces = user.userWorkspaces else { return }
             for workspace in workspaces {
-                self.userWorkspaces.append(workspace as! Workspace)
+                self.userWorkspaces.append(workspace as? Workspace)
             }
         }
+        
     }
-    
-    func getWorkspaceBoards() {
-        for workspace in userWorkspaces where workspace == currentBoard?.boardWorkspace {
-            guard let boards = workspace.workspaceBoards else { return }
-            for board in boards {
-                self.boards.append(board as! Board)
-            }
-        }
-    }
-    
-    func getBoardLists() {
-        for board in boards where board == self.currentBoard {
-            guard let lists = board.boardLists else { return }
-            for list in lists {
-                self.boardLists.append(list as! List)
-            }
-        }
-    }
-    
+
     func addBoard() {
         let alert = UIAlertController(title: "Введите название проекта", message: "", preferredStyle: .alert)
         alert.addTextField(configurationHandler: { (alertTextField) in
@@ -205,9 +204,16 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
         
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
             if let text = self.alertTextField?.text {
-                guard let currentBoard = self.currentBoard, let user = self.currentUser else { return }
-                let board = Board.addNewBoard(boardName: text, boardOwner: user, boardWorkspace: currentBoard.boardWorkspace) as! Board
-                self.boardButton.setTitle(board.boardName, for: .normal)
+                guard let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()),
+                      let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers())
+                else { return }
+                for user in users where "\(user.userID)" == AuthService.shared.currentUser {
+                    for workspace in workspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+                        let newBoard = Board.addNewBoard(boardName: text, boardOwner: user, boardWorkspace: workspace) as! Board
+                        AuthService.shared.currentBoard = "\(newBoard.boardID)"
+                        self.boardButton.setTitle(newBoard.boardName, for: .normal)
+                    }
+                }
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
                 }
@@ -221,34 +227,32 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
     }
     
     func updateBoard() {
-        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
-        alert.addTextField(configurationHandler: { (alertTextField) in
-            guard let board = self.currentBoard else { return }
-            alertTextField.text = board.boardName
-            self.alertTextField = alertTextField
-        })
+        guard let boards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards()) else { return }
+        for board in boards where "\(board.boardID)" == AuthService.shared.currentBoard {
+            
+            let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+            alert.addTextField(configurationHandler: { (alertTextField) in
+                    alertTextField.text = board.boardName
+                    self.alertTextField = alertTextField
+                
+            })
         
-        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
-            guard let text = self.alertTextField?.text else { return }
-            let existedBoards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards())
-            if let existedBoards = existedBoards {
-                for board in existedBoards where board == self.currentBoard {
+            let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                    guard let text = self.alertTextField?.text else { return }
                     board.boardName = text
                     CoreDataStack.shared.saveContext()
-                    AuthService.shared.currentBoard = board
+                    AuthService.shared.currentBoard = "\(board.boardID)"
                     self.boardButton.setTitle(board.boardName, for: .normal)
                     DispatchQueue.main.async {
                         self.collectionView.reloadData()
                     }
-                }
             }
+            
+            let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+            
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
         }
-        
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
-        
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-        
     }
     
     func replaceBoard() {
@@ -272,16 +276,18 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
         
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
-            guard let board = self.currentBoard else { return }
-            CoreDataStack.shared.deleteContext(object: board as Board)
-            
-            AuthService.shared.currentBoard = nil
-            
-            let workspaceViewController = WorkspaceViewController()
-            
-            self.addChild(workspaceViewController)
-            self.view.addSubview(workspaceViewController.view)
-            workspaceViewController.didMove(toParent: self)
+            guard let boards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards()) else { return }
+            for board in boards where "\(board.boardID)" == AuthService.shared.currentBoard {
+                CoreDataStack.shared.deleteContext(object: board as Board)
+                
+                AuthService.shared.currentBoard = nil
+                
+                let workspaceViewController = WorkspaceViewController()
+                
+                self.addChild(workspaceViewController)
+                self.view.addSubview(workspaceViewController.view)
+                workspaceViewController.didMove(toParent: self)
+            }
         }
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
@@ -323,15 +329,15 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return boardLists.count
+        return listFetchedResultsController?.sections?[section].numberOfObjects ?? 0
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! BoardCollectionViewCell
         
-        let list = boardLists[indexPath.row]
-        cell.setupCollectionView(list: list, controller: self)
-    
+        if let list = listFetchedResultsController?.object(at: indexPath)  {
+            cell.setupCollectionView(list: list, controller: self)
+        }
         return cell
     }
     
@@ -340,22 +346,22 @@ class BoardViewController: UICollectionViewController, UIPickerViewDataSource, U
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return userWorkspaces.count
+        return self.userWorkspaces.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return userWorkspaces[row].workspaceName
+        return self.userWorkspaces[row]?.workspaceName
+                
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let selectedWorkspace = userWorkspaces[row]
-        boardButton.setTitle(selectedWorkspace.workspaceName, for: .normal)
-        let existedBoards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards())
-        if let existedBoards = existedBoards {
-            for board in existedBoards where board == currentBoard {
-                board.boardWorkspace = selectedWorkspace
+        let selectedWorkspace = self.userWorkspaces[row]
+        boardButton.setTitle(selectedWorkspace?.workspaceName, for: .normal)
+        if let existedBoards = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Board.getAllBoards()) {
+            for board in existedBoards where "\(board.boardID)" == AuthService.shared.currentBoard {
+                board.boardWorkspace = selectedWorkspace!
                 CoreDataStack.shared.saveContext()
-                AuthService.shared.currentBoard = board
+                AuthService.shared.currentBoard = "\(board.boardID)"
             }
         }
     }

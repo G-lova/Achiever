@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import CoreData
 
 class TaskViewController: UIViewController {
     
-    let currentTask = AuthService.shared.currentTask
+    var fetchedResultsController: NSFetchedResultsController<Task>!
+    var currentTask: Task!
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -209,6 +211,20 @@ class TaskViewController: UIViewController {
             placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor)
             
         ])
+    }
+    
+    func loadDataFromCoreData() {
+        Task.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.fetchedResultsController = fetchedResultsController
+            self?.getTask()
+        }
+    }
+    
+    func getTask() {
+        guard let tasks = fetchedResultsController.fetchedObjects else { return }
+        for task in tasks where "\(task.taskID)" == AuthService.shared.currentTask {
+            self.currentTask = task
+        }
     }
     
     @objc func isFinishedChanged() {

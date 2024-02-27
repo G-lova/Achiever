@@ -29,32 +29,30 @@ class AuthViewModel: AuthViewModelDelegate {
             }
         }
         
-        let newUser = User.addNewUser(userEmail: email, userName: userName, userPassword: password)
+        let _ = User.addNewUser(userEmail: email, userName: userName, userPassword: password)
         KeychainService.shared.savePassword(password, for: email)
-        AuthService.shared.logIn(user: newUser as! User)
     }
     
     // Authentification process
-    func signIn(email: String, password: String, errorHandler: @escaping(String) -> Void) {
+    func signIn(email: String, password: String, completionHandler: @escaping() -> Void, errorHandler: @escaping(String) -> Void) {
         
         let context = CoreDataStack.shared.persistentContainer.viewContext
-        let users = try? context.fetch(User.getAllUsers())
-        if let users = users {
+        if let users = try? context.fetch(User.getAllUsers()) {
             for user in users where user.userEmail == email {
                 if KeychainService.shared.getPassword(forAccount: email) == password {
-                AuthService.shared.logIn(user: user)
-                return
+                    AuthService.shared.logIn(userID: "\(user.userID)")
+                    completionHandler()
+                    return
                 } else {
                     let error = "Неверный пароль"
                     errorHandler(error)
+                    return
                 }
             }
-            let error = "Данный email еще не зарегистрирован"
-            errorHandler(error)
-        } else {
-            let error = "Данный email еще не зарегистрирован"
-            errorHandler(error)
         }
+        let error = "Данный email еще не зарегистрирован"
+        errorHandler(error)
+        return
     }
     
     func sendResetCode(email: String, completion: @escaping (String) -> Void) {

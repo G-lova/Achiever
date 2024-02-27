@@ -13,9 +13,9 @@ class AuthService {
     
     var isLoggedIn: Bool = false
     
-    func logIn(user: User) {
+    func logIn(userID: String) {
         isLoggedIn = true
-        currentUser = user
+        currentUser = userID
     }
     
     func logOut() {
@@ -23,45 +23,45 @@ class AuthService {
         currentUser = nil
     }
     
-    var currentUser: User? {
+    var currentUser: String? {
         get {
-            return UserDefaults.standard.object(forKey: "currentUser") as? User
+            return UserDefaults.standard.string(forKey: "currentUser") ?? ""
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentUser")
         }
     }
     
-    var currentWorkspace: Workspace? {
+    var currentWorkspace: String? {
         get {
-            return UserDefaults.standard.object(forKey: "currentWorkspace") as? Workspace
+            return UserDefaults.standard.string(forKey: "currentWorkspace") ?? ""
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentWorkspace")
         }
     }
     
-    var currentBoard: Board? {
+    var currentBoard: String? {
         get {
-            return UserDefaults.standard.object(forKey: "currentBoard") as? Board
+            return UserDefaults.standard.string(forKey: "currentBoard") ?? ""
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentBoard")
         }
     }
     
-    var currentList: List? {
+    var currentList: String? {
         get {
-            return UserDefaults.standard.object(forKey: "currentList") as? List
+            return UserDefaults.standard.string(forKey: "currentList") ?? ""
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentList")
         }
     }
     
-    var currentTask: Task? {
+    var currentTask: String? {
         get {
-            return UserDefaults.standard.object(forKey: "currentTask") as? Task
+            return UserDefaults.standard.string(forKey: "currentTask") ?? ""
         }
         set {
             UserDefaults.standard.setValue(newValue, forKey: "currentTask")

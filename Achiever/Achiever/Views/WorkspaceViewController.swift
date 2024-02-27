@@ -8,30 +8,36 @@
 import UIKit
 import CoreData
 
-class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
+class WorkspaceViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var fetchedResultController: NSFetchedResultsController<User>!
-    var user = AuthService.shared.currentUser
-    var activeWorkspace = AuthService.shared.currentWorkspace
-    var userWorkspaces: [Workspace] = []
-    var workspaceBoards: [Board] = []
+    var userFetchedResultsController: NSFetchedResultsController<User>!
+    var workspaceFetchedResultsController: NSFetchedResultsController<Workspace>!
+    var boardFetchedResultsController: NSFetchedResultsController<Board>!
+    
+    let cellReuseIdentifier = "BoardCell"
+    
+    private var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
     
     private let workspaceLabel: UILabel = {
         let label = UILabel()
         label.text = "Рабочее пространство:"
-        label.textColor = UIColor(named: "PrimaryTextLabelColor")
+        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let workspaceButton: UIButton = {
+    private var workspaceButton: UIButton = {
         let button = UIButton()
-        button.setTitleColor(UIColor(named: "PrimaryTextLabelColor"), for: .normal)
+        button.setTitleColor(UIColor(named: "ComplementaryTextButtonColor"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private let chevronDownButton: UIButton = {
+    private var chevronDownButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -40,23 +46,32 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
     
     private var alertTextField: UITextField?
     
-    private let newBoardTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Создать новый проект"
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
+//    private var newBoardTextField: UITextField = {
+//        let textField = UITextField()
+//        textField.placeholder = "Создать новый проект"
+//        textField.translatesAutoresizingMaskIntoConstraints = false
+//        return textField
+//    }()
+//
+//    private var readyButton: UIButton = {
+//        let button = UIButton()
+//        button.setImage(UIImage(systemName: "checkmark"), for: .normal)
+//        button.isHidden = true
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        return button
+//    }()
     
-    private let readyButton: UIButton = {
+    private var addNewBoardButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        button.isHidden = true
+        button.setTitle("Создать новый проект", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         
         setupViews()
     }
@@ -67,23 +82,24 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         view.addSubview(workspaceLabel)
         view.addSubview(workspaceButton)
         view.addSubview(chevronDownButton)
+        view.addSubview(tableView)
+//        view.addSubview(newBoardTextField)
+//        view.addSubview(readyButton)
+        view.addSubview(addNewBoardButton)
         
-        if let activeWorkspace = activeWorkspace {
-            workspaceButton.setTitle("\(activeWorkspace.workspaceName)", for: .normal)
-        } else {
-            let profileViewController = ProfileViewController()
-            
-            addChild(profileViewController)
-            view.addSubview(profileViewController.view)
-            profileViewController.didMove(toParent: self)
-        }
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        setupWorkspaceButton()
                 
         setupNavigationBar()
         setupConstraints()
         
-        newBoardTextField.delegate = self
+//        newBoardTextField.delegate = self
+//
+//        readyButton.addTarget(self, action: #selector(didReadyButtonTapped), for: .touchUpInside)
         
-        readyButton.addTarget(self, action: #selector(didReadyButtonTapped), for: .touchUpInside)
+        addNewBoardButton.addTarget(self, action: #selector(didAddNewButtonTapped), for: .touchUpInside)
         
         loadDataFromCoreData()
         didWorkspaceButtonTapped()
@@ -91,110 +107,99 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         
     }
     
+    func setupWorkspaceButton() {
+        guard let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+        for workspace in workspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+            workspaceButton.setTitle("\(workspace.workspaceName)", for: .normal)
+        }
+        let profileViewController = UINavigationController(rootViewController: ProfileViewController())
+        
+        addChild(profileViewController)
+        view.addSubview(profileViewController.view)
+        profileViewController.didMove(toParent: self)
+    
+    }
+    
     func setupNavigationBar() {
         
-        let profilePhotoButton: UIButton = {
-            let button = UIButton()
-            button.backgroundColor = UIColor(named: "AccentButtonBackgroundColor")
-            button.setImage(UIImage(systemName: "person.fill"), for: .normal)
-            button.layer.cornerRadius = button.frame.size.width / 2
-            button.layer.masksToBounds = true
-            return button
-        }()
-        
-        let nameButton: UIButton = {
-            let button = UIButton()
-            button.setTitleColor(UIColor(named: "PrimaryTextLabelColor"), for: .normal)
-            if let user = user {
-                button.setTitle("\(user.userName)", for: .normal)
-            }
-            return button
-        }()
-        
-        profilePhotoButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
-        
-        nameButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
-        
-        let stackView: UIStackView = {
-            let stackView = UIStackView(arrangedSubviews: [profilePhotoButton, nameButton])
-            stackView.axis = .horizontal
-            stackView.alignment = .center
-            return stackView
-        }()
+        let profilePhotoButton = UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .plain, target: self, action: #selector(photoButtonTapped))
         
         let bellButton = UIBarButtonItem(image: UIImage(systemName: "bell.badge"), style: .plain, target: self, action: #selector(bellButtonTapped))
         
         let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.right"), style: .plain, target: self, action: #selector(backButtonTapped))
         
-        self.navigationItem.backBarButtonItem?.accessibilityElementsHidden = true
-        self.navigationItem.leftBarButtonItem?.customView = stackView
-        self.navigationItem.rightBarButtonItems = [bellButton, backButton]
+        self.navigationItem.leftBarButtonItem = profilePhotoButton
+        self.navigationItem.rightBarButtonItems = [backButton, bellButton]
+        
+        guard let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers()) else { return }
+        for user in users where "\(user.userID)" == AuthService.shared.currentUser {
+//            self.navigationItem.title = user.userName
+            self.navigationItem.backButtonTitle = user.userName
+            
+        }
     }
     
     func setupConstraints() {
         let safeArea = view.safeAreaLayoutGuide
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             workspaceLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            workspaceLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10),
+            workspaceLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 50),
             workspaceLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             workspaceLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             workspaceButton.topAnchor.constraint(equalTo: workspaceLabel.bottomAnchor, constant: 10),
             workspaceButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             workspaceButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            chevronDownButton.topAnchor.constraint(equalTo: workspaceButton.topAnchor),
+            chevronDownButton.bottomAnchor.constraint(equalTo: workspaceButton.bottomAnchor),
             chevronDownButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             tableView.topAnchor.constraint(equalTo: workspaceButton.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
+            addNewBoardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            tableView.bottomAnchor.constraint(equalTo: addNewBoardButton.topAnchor),
+            addNewBoardButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            addNewBoardButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
             
         ])
     }
     
     func loadDataFromCoreData() {
-        User.loadDataFromCoreData() { [weak self] fetchedResultController in
-            self?.fetchedResultController = fetchedResultController
-            self?.getUserWorkspaces()
-            self?.getWorkspaceBoards()
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
+        // get users info
+        User.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.userFetchedResultsController = fetchedResultsController
         }
-    }
-    
-    func getUserWorkspaces() {
-        guard let users = fetchedResultController.fetchedObjects else { return }
-        for user in users where user == self.user {
-            guard let workspaces = user.userWorkspaces else { return }
-            for workspace in workspaces {
-                self.userWorkspaces.append(workspace as! Workspace)
-            }
+        
+        // get workspaces info
+        Workspace.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.workspaceFetchedResultsController = fetchedResultsController
         }
-    }
-    
-    func getWorkspaceBoards() {
-        for workspace in userWorkspaces where workspace == activeWorkspace {
-            guard let boards = workspace.workspaceBoards else { return }
-            for board in boards {
-                self.workspaceBoards.append(board as! Board)
-            }
+        
+        // get boards info
+        Board.loadDataFromCoreData() { [weak self] fetchedResultsController in
+            self?.boardFetchedResultsController = fetchedResultsController
         }
+            
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+        
     }
     
     func didWorkspaceButtonTapped() {
         var menuChildren: [UIMenuElement] = []
         
-        for workspace in self.userWorkspaces where workspace != activeWorkspace {
+        guard let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+        
+        for workspace in workspaces where "\(workspace.workspaceID)" != AuthService.shared.currentWorkspace {
             menuChildren.append(UIAction(title: "\(workspace.workspaceName)", handler: {_ in
-                AuthService.shared.currentWorkspace = workspace
+                AuthService.shared.currentWorkspace = "\(workspace.workspaceID)"
                 self.workspaceButton.setTitle("\(workspace.workspaceName)", for: .normal)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+//                DispatchQueue.main.async {
+//                    self.tableView.reloadData()
+//                }
             }))
             menuChildren.append(UIAction(title: "----------------------", handler: {_ in
-                print()
+                
             }))
             menuChildren.append(UIAction(title: "Создать пространство", handler: {_ in
                 self.addWorkspace()
@@ -223,39 +228,12 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
             if let text = self.alertTextField?.text {
-                guard let user = self.user else { return }
-                let workspace = Workspace.addNewWorkspace(workspaceName: text, workspaceOwner: user) as! Workspace
-                self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
-        
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
-        
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-    }
-    
-    func updateWorkspace() {
-        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
-        alert.addTextField(configurationHandler: { (alertTextField) in
-            guard let workspace = self.activeWorkspace else { return }
-            alertTextField.text = workspace.workspaceName
-            self.alertTextField = alertTextField
-        })
-        
-        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
-            
-            if let text = self.alertTextField?.text {
-                guard let existedWorkspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
-                for workspace in existedWorkspaces where workspace == self.activeWorkspace {
-                    workspace.workspaceName = text
-                    CoreDataStack.shared.saveContext()
-                    AuthService.shared.currentWorkspace = workspace
-                    self.activeWorkspace = AuthService.shared.currentWorkspace
+                guard let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers()) else { return }
+                for user in users where "\(user.userID)" == AuthService.shared.currentUser {
+                    let workspace = Workspace.addNewWorkspace(workspaceName: text, workspaceOwner: user) as! Workspace
                     self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
+                    AuthService.shared.currentWorkspace = "\(workspace.workspaceID)"
+                
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
@@ -268,6 +246,45 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         alert.addAction(okAction)
         alert.addAction(cancelAction)
         
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func updateWorkspace() {
+        
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { (alertTextField) in
+            
+            guard let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+            for workspace in workspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+                alertTextField.text = workspace.workspaceName
+                self.alertTextField = alertTextField
+            }
+        })
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            
+            if let text = self.alertTextField?.text {
+                guard let existedWorkspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+                for workspace in existedWorkspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+                    workspace.workspaceName = text
+                    CoreDataStack.shared.saveContext()
+                    AuthService.shared.currentWorkspace = "\(workspace.workspaceID)"
+                    
+                    self.workspaceButton.setTitle(workspace.workspaceName, for: .normal)
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     func deleteWorkspace() {
@@ -275,12 +292,14 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         
         let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
             
-            guard let workspace = self.activeWorkspace else { return }
-            CoreDataStack.shared.deleteContext(object: workspace as Workspace)
+            guard let existedWorkspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()) else { return }
+            for workspace in existedWorkspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+                
+                CoreDataStack.shared.deleteContext(object: workspace as Workspace)
+                AuthService.shared.currentWorkspace = nil
+            }
             
-            AuthService.shared.currentWorkspace = nil
-            
-            let profileViewController = ProfileViewController()
+            let profileViewController = UINavigationController(rootViewController: ProfileViewController())
             
             self.addChild(profileViewController)
             self.view.addSubview(profileViewController.view)
@@ -291,6 +310,8 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         
         alert.addAction(okAction)
         alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func photoButtonTapped() {
@@ -311,49 +332,102 @@ class WorkspaceViewController: UITableViewController, UITextFieldDelegate {
         self.dismiss(animated: false, completion: nil)
     }
     
-    @objc func didReadyButtonTapped() {
-        guard let boardName = newBoardTextField.text, let user = user, let activeWorkspace = activeWorkspace else { return }
-        let _ = Board.addNewBoard(boardName: boardName, boardOwner: user, boardWorkspace: activeWorkspace)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+    @objc func didAddNewButtonTapped() {
+        let alert = UIAlertController(title: "Введите название проекта", message: "", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { (alertTextField) in
+            self.alertTextField = alertTextField
+        })
+        
+        let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            if let text = self.alertTextField?.text {
+                
+                guard let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()),
+                      let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers())
+                else { return }
+                for user in users where "\(user.userID)" == AuthService.shared.currentUser {
+                    for workspace in workspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+                        let newBoard = Board.addNewBoard(boardName: text, boardOwner: user, boardWorkspace: workspace) as! Board
+                        AuthService.shared.currentBoard = "\(newBoard.boardID)"
+                    }
+                }
+        
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                let tabBarController = TabBarController()
+                self.navigationController?.pushViewController(tabBarController, animated: true)
+            }
         }
-        let tabBarController = TabBarController()
-        navigationController?.pushViewController(tabBarController, animated: true)
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        readyButton.isHidden = false
-    }
+//    @objc func didReadyButtonTapped() {
+//        guard let boardName = newBoardTextField.text,
+//              let workspaces = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(Workspace.getAllWorkspaces()),
+//              let users = try? CoreDataStack.shared.persistentContainer.viewContext.fetch(User.getAllUsers())
+//        else { return }
+//        for user in users where "\(user.userID)" == AuthService.shared.currentUser {
+//            for workspace in workspaces where "\(workspace.workspaceID)" == AuthService.shared.currentWorkspace {
+//                let newBoard = Board.addNewBoard(boardName: boardName, boardOwner: user, boardWorkspace: workspace) as! Board
+//                AuthService.shared.currentBoard = "\(newBoard.boardID)"
+//            }
+//        }
+//
+//        DispatchQueue.main.async {
+//            self.tableView.reloadData()
+//        }
+//        let tabBarController = TabBarController()
+//        navigationController?.pushViewController(tabBarController, animated: true)
+//    }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    //MARK: - UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate
+    
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        readyButton.isHidden = false
+//    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Проекты"
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return workspaceBoards.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return boardFetchedResultsController.sections?[section].numberOfObjects ?? 1
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        let board = workspaceBoards[indexPath.row]
-        cell.textLabel?.text = board.boardName
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .default, reuseIdentifier: cellReuseIdentifier)
+//        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier)
+        if let board = boardFetchedResultsController?.object(at: indexPath) {
+            cell.textLabel?.text = board.boardName
+        }
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        AuthService.shared.currentBoard = workspaceBoards[indexPath.row]
-        
-        let tabBarController = TabBarController()
-        navigationController?.pushViewController(tabBarController, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let board = boardFetchedResultsController?.object(at: indexPath) {
+            AuthService.shared.currentBoard = "\(board.boardID))"
+            
+            let tabBarController = TabBarController()
+            navigationController?.pushViewController(tabBarController, animated: true)
+        }
     }
     
-    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        
-        let stackView = UIStackView(arrangedSubviews: [newBoardTextField, readyButton])
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        return stackView
-    }
+//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+//
+//        let stackView = UIStackView(arrangedSubviews: [newBoardTextField, readyButton])
+//        stackView.axis = .horizontal
+//        stackView.alignment = .center
+//        stackView.distribution = .fill
+//        return stackView
+//    }
+    
+    
     
 }

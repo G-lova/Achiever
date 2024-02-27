@@ -105,7 +105,7 @@ extension Board {
                 
         CoreDataStack.shared.saveContext()
         
-        AuthService.shared.currentBoard = board
+        AuthService.shared.currentBoard = "\(board.boardID)"
         
         return board
     }

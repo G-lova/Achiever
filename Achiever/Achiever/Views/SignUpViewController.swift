@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SignUpViewController: UIViewController, UITextFieldDelegate {
+class SignUpViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -74,7 +74,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     private let passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Пароль"
-        textField.textContentType = .password
+//        textField.textContentType = .password
         textField.textColor = UIColor(named: "PrimaryTextLabelColor")
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
@@ -85,7 +85,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     private let repeatPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Повторите пароль"
-        textField.textContentType = .password
+//        textField.textContentType = .password
         textField.textColor = UIColor(named: "PrimaryTextLabelColor")
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
@@ -145,8 +145,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         
         setupConstraints()
         
-        emailTextField.delegate = self
-        
         signInButton.addTarget(self, action: #selector(didTapSignInButton), for: .touchUpInside)
         
         signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
@@ -161,7 +159,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
             logoImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
             logoImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -50),
             registrationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            registrationLabel.topAnchor.constraint(equalTo: logoImage.bottomAnchor, constant: 40),
+            registrationLabel.topAnchor.constraint(equalTo: logoImage.bottomAnchor, constant: 20),
             registrationLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             registrationLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             nameTextField.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -199,22 +197,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         ])
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Z0-9a-z.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        let proposedText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-        if !emailTest.evaluate(with: proposedText) && proposedText != "" {
-            // Неверный формат email
-            errorEmailLabel.text = "Неверный формат email"
-            errorEmailLabel.isHidden = false
-            emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
-            return false
-        }
-        errorEmailLabel.isHidden = true
-//        emailTextField.layer.borderColor = CGColor(red: 0, green: 1, blue: 0, alpha: 1)
-        return true
-    }
-    
     @objc private func didTapSignInButton() {
         navigationController?.pushViewController(SignInViewController(), animated: true)
     }
@@ -222,15 +204,32 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     @objc private func didTapSignUpButton() {
         guard let userName = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text else { return }
         
+        // Проверка на корректность ввода email
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Z0-9a-z.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        if !emailTest.evaluate(with: email) {
+            // Неверный формат email
+            errorEmailLabel.text = "Неверный формат email"
+            errorEmailLabel.isHidden = false
+            emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
+        }
+        
+        // Проверка на совпадение паролей
         if password != repeatPasswordTextField.text {
             passwordsMissmatchLabel.isHidden = false
             repeatPasswordTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
         }
         
         AuthViewModel.shared.signUp(userName: userName, email: email, password: password, errorHandler: {
-            self.errorEmailLabel.text = "Данный email уже зарегистрирован"
-            self.errorEmailLabel.isHidden = false
-            self.emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
+            let alert = UIAlertController(title: "", message: "Данный email уже зарегистрирован", preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                self.errorEmailLabel.text = "Данный email уже зарегистрирован"
+                self.errorEmailLabel.isHidden = false
+                self.emailTextField.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
+            }
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
         })
                 
         let workspaceViewController = WorkspaceViewController()

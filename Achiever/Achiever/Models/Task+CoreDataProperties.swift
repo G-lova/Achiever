@@ -88,7 +88,7 @@ extension Task {
                 
         CoreDataStack.shared.saveContext()
         
-        AuthService.shared.currentTask = task
+        AuthService.shared.currentTask = "\(task.taskID)"
         
         return task
     }

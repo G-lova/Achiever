@@ -137,7 +137,10 @@ extension User {
         user.userPlan = Plan.basic.rawValue
         
         let newWorkspace = Workspace.addNewWorkspace(workspaceName: user.userName, workspaceOwner: user)
+        
         user.userWorkspaces?.adding(newWorkspace)
+        
+        AuthService.shared.logIn(userID: "\(user.userID)")
         
         CoreDataStack.shared.saveContext()
         

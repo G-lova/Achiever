@@ -42,7 +42,6 @@
 		CE914B0B2B823ED7003FCEC5 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */; };
 		CE914B132B825891003FCEC5 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */; };
 		CE914B182B826C29003FCEC5 /* AuthViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */; };
-		CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */; };
 		CEAA56B42B88EA5200379EA4 /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */; };
 		CEAA56BF2B88FEDA00379EA4 /* BoardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */; };
 		CEAA56CC2B89160E00379EA4 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */; };
@@ -116,7 +115,6 @@
 		CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CE914B122B825891003FCEC5 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelDelegate.swift; sourceTree = "<group>"; };
-		CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthObserver.swift; sourceTree = "<group>"; };
 		CEAA56B32B88EA5200379EA4 /* BoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardViewController.swift; sourceTree = "<group>"; };
 		CEAA56BE2B88FEDA00379EA4 /* BoardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCollectionViewCell.swift; sourceTree = "<group>"; };
 		CEAA56CB2B89160E00379EA4 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
@@ -226,6 +224,7 @@
 				CE6E29972B7F990F00AE0101 /* Files+CoreDataClass.swift */,
 				CE6E29982B7F990F00AE0101 /* Files+CoreDataProperties.swift */,
 				CE914AF42B821B99003FCEC5 /* Plan.swift */,
+				CE6153812B7E84920094D107 /* UserActionsDelegate.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -238,8 +237,6 @@
 				CEBC4C372B8629150058D2FD /* KeychainService.swift */,
 				CE914B172B826C29003FCEC5 /* AuthViewModelDelegate.swift */,
 				CE914B0A2B823ED7003FCEC5 /* AuthViewModel.swift */,
-				CE914B1F2B826E3B003FCEC5 /* AuthObserver.swift */,
-				CE6153812B7E84920094D107 /* UserActionsDelegate.swift */,
 				CE61539C2B7E8D8F0094D107 /* TaskViewModelDelegate.swift */,
 				CE6153A92B7E8F290094D107 /* ListViewModelDelegate.swift */,
 				CE6153AE2B7E8FA60094D107 /* ListViewModel.swift */,
@@ -435,7 +432,6 @@
 				CE6E29A72B7F990F00AE0101 /* Task+CoreDataClass.swift in Sources */,
 				CE6153AF2B7E8FA60094D107 /* ListViewModel.swift in Sources */,
 				CE6153822B7E84920094D107 /* UserActionsDelegate.swift in Sources */,
-				CE914B202B826E3B003FCEC5 /* AuthObserver.swift in Sources */,
 				CE6153BE2B7E93390094D107 /* Observer.swift in Sources */,
 				CE6153A52B7E8E200094D107 /* TaskViewModel.swift in Sources */,
 				CE6E29A42B7F990F00AE0101 /* Files+CoreDataProperties.swift in Sources */,

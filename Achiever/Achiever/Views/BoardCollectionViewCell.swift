@@ -11,7 +11,7 @@ import CoreData
 class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
     
     var fetchedResultsController: NSFetchedResultsController<List>!
-    var activeList = AuthService.shared.currentList
+    var activeList: List!
     var tasks: [Task] = []
     var controller = UICollectionViewController()
     
@@ -24,6 +24,8 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+        
+        loadDataFromCoreData()
     }
     
     required init?(coder: NSCoder) {
@@ -59,7 +61,7 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
     }
     
     func setupCollectionView(list: List, controller: UICollectionViewController) {
-        AuthService.shared.currentList = list
+        AuthService.shared.currentList = "\(list.listID)"
         self.activeList = list
         guard let tasks = list.listTasks else { return }
         for task in tasks {
@@ -83,7 +85,8 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
     
     func getTasks() {
         guard let lists = fetchedResultsController.fetchedObjects else { return }
-        for list in lists where list == self.activeList {
+        for list in lists where "\(list.listID)" == AuthService.shared.currentList {
+            self.activeList = list
             guard let tasks = list.listTasks else { return }
             for task in tasks {
                 self.tasks.append(task as! Task)
@@ -106,7 +109,7 @@ class BoardCollectionViewCell: UICollectionViewCell, UITableViewDelegate, UITabl
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let task = tasks[indexPath.row]
-        AuthService.shared.currentTask = task
+        AuthService.shared.currentTask = "\(task.taskID)"
         controller.navigationController?.pushViewController(TaskViewController(), animated: true)
     }
     

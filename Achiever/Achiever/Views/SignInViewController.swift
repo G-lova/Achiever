@@ -58,7 +58,7 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         let textField = UITextField()
         textField.placeholder = "Пароль"
         textField.borderStyle = .roundedRect
-        textField.textContentType = .password
+//        textField.textContentType = .password
         textField.isSecureTextEntry = true
         textField.textColor = UIColor(named:"PrimaryTextLabelColor")
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -121,6 +121,8 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
         
         setupConstraints()
         
+        signInButton.addTarget(self, action: #selector(didSignInButtonTapped), for: .touchUpInside)
+        
         registrationButton.addTarget(self, action: #selector(didRegistrationButtonTapped), for: .touchUpInside)
         
 //        forgetPasswordButton.addTarget(self, action: #selector(didResetPasswordButtonTaped), for: .touchUpInside)
@@ -175,9 +177,22 @@ class SignInViewController: UIViewController, MFMailComposeViewControllerDelegat
     
     @objc private func didSignInButtonTapped() {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
-        AuthViewModel.shared.signIn(email: email, password: password, errorHandler: { error in
-            self.errorLabel.text = error
-            self.errorLabel.isHidden = false
+        AuthViewModel.shared.signIn(email: email, password: password, completionHandler: {
+            let workspaceViewController = UINavigationController(rootViewController: WorkspaceViewController())
+            
+            self.addChild(workspaceViewController)
+            self.view.addSubview(workspaceViewController.view)
+            workspaceViewController.didMove(toParent: self)
+            
+        }, errorHandler: { (error) in
+            let alert = UIAlertController(title: "", message: error, preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                self.errorLabel.text = error
+                self.errorLabel.isHidden = false
+            }
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
         })
     }
     

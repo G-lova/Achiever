@@ -63,7 +63,7 @@ extension Workspace {
                 
         CoreDataStack.shared.saveContext()
         
-        AuthService.shared.currentWorkspace = workspace
+        AuthService.shared.currentWorkspace = "\(workspace.workspaceID)"
         
         return workspace
     }
