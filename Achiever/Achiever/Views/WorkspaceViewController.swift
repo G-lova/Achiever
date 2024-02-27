@@ -64,6 +64,7 @@ class WorkspaceViewController: UIViewController, UITableViewDelegate, UITableVie
     private var addNewBoardButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать новый проект", for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -158,7 +159,7 @@ class WorkspaceViewController: UIViewController, UITableViewDelegate, UITableVie
             addNewBoardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             tableView.bottomAnchor.constraint(equalTo: addNewBoardButton.topAnchor),
             addNewBoardButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            addNewBoardButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -10)
+            addNewBoardButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
             
         ])
     }
